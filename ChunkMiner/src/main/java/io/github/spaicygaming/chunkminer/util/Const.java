@@ -17,6 +17,10 @@ public class Const {
 	// The miner ignores blocks of one of these materials
 	public static List<Material> IGNORED_MATERIALS = new ArrayList<>();
 	
+	// Hooks
+	public static boolean WORLDGUARD_HOOK = main.getConfig().getBoolean("MainSettings.hooks.WorldGuard");
+
+	
 	// Users Permissions
 	public final static String PERM_PLACE = "chunkminer.place";
 	

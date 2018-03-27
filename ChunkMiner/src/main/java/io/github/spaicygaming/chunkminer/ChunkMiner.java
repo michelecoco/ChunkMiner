@@ -3,7 +3,10 @@ package io.github.spaicygaming.chunkminer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import io.github.spaicygaming.chunkminer.cmd.CMCommands;
 import io.github.spaicygaming.chunkminer.listeners.InteractListener;
@@ -16,7 +19,7 @@ public class ChunkMiner extends JavaPlugin {
 	private static ChunkMiner instance;
 	private MinerItem minerItem;
 	
-	private double configVersion = 1.0;
+	private double configVersion = 1.1;
 	
 	public void onEnable() {
 		instance = this;
@@ -34,6 +37,14 @@ public class ChunkMiner extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new InteractListener(this), this);
 		getCommand("chunkminer").setExecutor(new CMCommands());
 
+		// WorldGuard hook message
+		if (Const.WORLDGUARD_HOOK) {
+			if (getWorldGuard() != null)
+				getLogger().info("Hooked into WorldGuard");
+			else
+				getLogger().info("Can't hook into WorldGuard, plugin not found");
+		}
+		
 		getLogger().info("ChunkMiner has been enabled!");
 	}
 	
@@ -74,6 +85,17 @@ public class ChunkMiner extends JavaPlugin {
 		cs.sendMessage(ChatColor.RED + ChatUtil.getSeparators('=', 70));
 		
 		getServer().getPluginManager().disablePlugin(this);
+	}
+	
+	public WorldGuardPlugin getWorldGuard() {
+	    Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+	    
+	    // WorldGuard may not be loaded
+	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+	        return null;
+	    }
+
+	    return (WorldGuardPlugin) plugin;
 	}
 	
 }

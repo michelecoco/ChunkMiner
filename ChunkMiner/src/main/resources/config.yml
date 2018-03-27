@@ -11,7 +11,9 @@ MainSettings:
   ignoreMaterial:
    - ENDER_CHEST
   
-  # don't worry, this section will be filled with the next updates!
+  hooks:
+    # true = players are not allowed to place chunk miners in protected regions
+    WorldGuard: true
   
 MinerItem:
   # MUST be a block
@@ -43,6 +45,7 @@ Messages:
   minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
   targetFullInventory: "&c{target}'s invantory is full"
   invalidAmount: "&cThe amount must be an integer number"
+  notAllowedHere: "&cYou are not allowed to place the &5ChunkMiner &chere!"
   
 # DO NOT TOUCH
-configVersion: 1.0
+configVersion: 1.1

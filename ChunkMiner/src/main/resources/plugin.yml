@@ -2,6 +2,7 @@ main: io.github.spaicygaming.chunkminer.ChunkMiner
 
 name: ChunkMiner
 version: ${project.version}
+softdepend: [WorldGuard]
 
 author: SpaicyGaming
 

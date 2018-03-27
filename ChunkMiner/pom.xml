@@ -4,10 +4,11 @@
 
 	<groupId>io.github.spaicygaming</groupId>
 	<artifactId>chunkminer</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 
 	<name>ChunkMiner</name>
+	<url>https://www.spigotmc.org/resources/54969/</url>
 	<developers>
 		<developer>
 			<name>SpaicyGaming</name>
@@ -47,6 +48,11 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
+
+		<repository>
+			<id>sk89q-repo</id>
+			<url>http://maven.sk89q.com/repo/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -58,11 +64,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
+			<groupId>com.sk89q.worldguard</groupId>
+			<artifactId>worldguard-legacy</artifactId>
+			<version>6.2</version>
 		</dependency>
+
 	</dependencies>
 
 </project>

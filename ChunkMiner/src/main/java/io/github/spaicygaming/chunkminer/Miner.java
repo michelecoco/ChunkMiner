@@ -7,6 +7,9 @@ import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import io.github.spaicygaming.chunkminer.util.Const;
 
@@ -16,9 +19,21 @@ public class Miner {
 	 * The chunk the player placed the miner
 	 */
 	private Chunk chunk;
+
+	/**
+	 * The player who placed the miner
+	 */
+	private Player player;
 	
-	public Miner(Chunk chunk) {
+	/**
+	 * WorldGuard instance
+	 */
+	private WorldGuardPlugin worldGuard;
+	
+	public Miner(Chunk chunk, Player player, WorldGuardPlugin worldGuard) {
 		this.chunk = chunk;
+		this.player = player;
+		this.worldGuard = worldGuard;
 	}
 	
 	/**
@@ -29,7 +44,7 @@ public class Miner {
 	/**
 	 * Scan the blocks inside the chunk and add
 	 * them in {@link #blocksToRemove}
-	 * @return (this will be used later)
+	 * @return false if the player is not allowed to build in this region
 	 */
 	public boolean scan() {
 //		long actionStart = System.currentTimeMillis();
@@ -44,15 +59,16 @@ public class Miner {
 				for (int y = Const.MIN_HEIGHT; y < world.getMaxHeight(); y++) {
 					Block currBlock = world.getBlockAt(xx, y, zz);
 					
-					// Se il blocco è aria non lo aggiunge nella lista dei blocchi da rimuovere
+					// Check if there is WorldGuard
+					if (worldGuard != null)
+						// Check if the block is in a WorldGuard's protected region and
+						// if the player is allowed to build in that region
+						if (Const.WORLDGUARD_HOOK && !worldGuard.canBuild(player, currBlock))
+							return false;
+					
 					// Skip blocks made of ignored materials and Air
 					if (ignoreMaterial(currBlock.getType()) || currBlock.getType() == Material.AIR)
 						continue;
-						
-					/*
-					 * TODO: controllare se il blocco è in una region protetta
-					 * e in caso return false
-					 */
 					
 					// Add the blocks to the list of blocks to remove on #mine()
 					blocksToRemove.add(currBlock);

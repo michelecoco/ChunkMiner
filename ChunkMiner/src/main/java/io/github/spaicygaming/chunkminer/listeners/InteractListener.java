@@ -34,25 +34,30 @@ public class InteractListener implements Listener {
 		if (!minerItem.isSimilar(event.getItem())) return;
 		
 		/*
-		 * TODO: INSERIRE UNA CONFIRM GUI
+		 * TODO: add a confirm gui
 		 */
 		
 		event.setCancelled(true);
 		Player player = event.getPlayer();
 		
-		// Remove the ChunkMiner from player's hand
-		player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
-		player.updateInventory();
-		
-		// Message
-		player.sendMessage(ChatUtil.c("minerPlaced"));
-		
 		// The chunk the player is in
 		Chunk chunk = event.getClickedBlock().getLocation().getChunk();
 		
 		// Scan and mine the chunk
-		Miner miner = new Miner(chunk);
-		miner.scan();
+		Miner miner = new Miner(chunk, player, main.getWorldGuard());
+		// If the player is not allowed to build in this region...
+		if (!miner.scan()) {
+			player.sendMessage(ChatUtil.c("notAllowedHere"));
+			return;
+		}
+		
+		// Remove the ChunkMiner from player's hand
+		player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
+		player.updateInventory();
+		
+		// Action start message
+		player.sendMessage(ChatUtil.c("minerPlaced"));
+		
 		miner.mine();
 		
 		// Action finished Message
