@@ -35,8 +35,9 @@ Messages:
     - ""
     - "            &c&m-----+--+-----"
   
+  onlyInGame: "&cThis command can be executed only by a player"
   noCmdPerms: "&cYou do not have permissions to perform this command"
-  targetOffline: "&cThe player {target} is not online"
+  targetOffline: "&cThe player '{target}' is not online"
   itemGived: "&aYou gave &6{amount}x ChunkMiner &ato &b{target}"
   itemReceivedOther: "&aYou received &6{amount}x &bChunkMiner &afrom &6{giver}"
   itemReceived: "&aYou received &6{amount}x &bChunkMiner"
