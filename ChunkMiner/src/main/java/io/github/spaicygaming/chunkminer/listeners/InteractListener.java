@@ -26,19 +26,32 @@ public class InteractListener implements Listener {
 
 	@EventHandler
 	public void onBlockPlace(PlayerInteractEvent event) {
-		// Check the Action and the permissions
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK || !event.getPlayer().hasPermission(Const.PERM_PLACE))
+		// Check the Action
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
-
+		
 		// Return if the item is not a ChunkMiner
 		if (!minerItem.isSimilar(event.getItem())) return;
+		
+		
+		// Cancel the event
+		event.setCancelled(true);
+		Player player = event.getPlayer();
+		
+		// Return is the player does not have permission
+		if (!player.hasPermission(Const.PERM_PLACE)) {
+			player.sendMessage(ChatUtil.c("noPlacePerms").replace("{perm}", Const.PERM_PLACE));
+			// To prevent glitchy items
+			player.updateInventory();
+			return;
+		}
 		
 		/*
 		 * TODO: add a confirm gui
 		 */
 		
-		event.setCancelled(true);
-		Player player = event.getPlayer();
+		// Action start message
+		player.sendMessage(ChatUtil.c("minerPlaced"));
 		
 		// The chunk the player is in
 		Chunk chunk = event.getClickedBlock().getLocation().getChunk();
@@ -54,9 +67,6 @@ public class InteractListener implements Listener {
 		// Remove the ChunkMiner from player's hand
 		player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
 		player.updateInventory();
-		
-		// Action start message
-		player.sendMessage(ChatUtil.c("minerPlaced"));
 		
 		miner.mine();
 		
