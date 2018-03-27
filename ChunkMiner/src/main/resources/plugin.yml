@@ -1,0 +1,11 @@
+main: io.github.spaicygaming.chunkminer.ChunkMiner
+
+name: ChunkMiner
+version: ${project.version}
+
+author: SpaicyGaming
+
+commands:
+  chunkminer:
+    description: Main command.
+    aliases: [cminer, miner]

@@ -1,0 +1,48 @@
+
+MainSettings:
+  # the y the miner will start mine from
+  minHeight: 1
+
+  # True = when someone place a ChunkMiner all players with the permission 'chunkminer.notify'
+  # receive the message "minerNotifyStaff" (see below in the "Messages" section)
+  notify: true
+  
+  # Blocks with the following materials are not removed
+  ignoreMaterial:
+   - ENDER_CHEST
+  
+  # don't worry, this section will be filled with the next updates!
+  
+MinerItem:
+  # MUST be a block
+  material: COBBLESTONE
+  displayName: "&5ChunkMiner"
+  lore:
+  - ""
+  - "&7Right-Click the block you want to"
+  - "&7place the &bChunkMiner &7on!"
+
+Messages:
+  prefix: "&8[&cChunkMiner&8]"
+  HelpMenu:
+    - "  &7&m-+-+-+-&r &c&lChunkMiner &7&m-+-+-+-"
+    - ""
+    - "&b/cminer help &7-> &6Display this menu"
+    - "&b/cminer get <amount> &7-> &6Get a chunk miner"
+    - "&b/cminer give <target> <amount> &7-> &6Give a ChunkMiner to the target"
+    - ""
+    - "            &c&m-----+--+-----"
+  
+  noCmdPerms: "&cYou do not have permissions to perform this command"
+  targetOffline: "&cThe player {target} is not online"
+  itemGived: "&aYou gave &6{amount}x ChunkMiner &ato &b{target}"
+  itemReceivedOther: "&aYou received &6{amount}x &bChunkMiner &afrom &6{giver}"
+  itemReceived: "&aYou received &6{amount}x &bChunkMiner"
+  minerPlaced: "&aYou placed a &bChunkMiner&a! &7Starting mining operation..."
+  minerSuccess: "&aOperation successfully finished!"
+  minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
+  targetFullInventory: "&c{target}'s invantory is full"
+  invalidAmount: "&cThe amount must be an integer number"
+  
+# DO NOT TOUCH
+configVersion: 1.0

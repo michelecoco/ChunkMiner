@@ -1,0 +1,12 @@
+/target/
+
+# Eclipse Stuff
+.classpath
+.project
+/.settings/
+
+# Ant
+/.externalToolBuilders/
+
+# Todo list
+todo.list
