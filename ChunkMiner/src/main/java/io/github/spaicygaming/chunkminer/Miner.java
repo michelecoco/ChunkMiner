@@ -53,7 +53,7 @@ public class Miner {
 		
 		int x = chunk.getX() << 4;
 		int z = chunk.getZ() << 4;
-
+		
 		for (int xx = x; xx < x + 16; xx++)
 			for (int zz = z; zz < z + 16; zz++)
 				for (int y = Const.MIN_HEIGHT; y < world.getMaxHeight(); y++) {
