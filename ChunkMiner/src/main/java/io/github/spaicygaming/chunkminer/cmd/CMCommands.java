@@ -32,7 +32,7 @@ public class CMCommands implements CommandExecutor {
 				
 				// Controlla che l'amount sia un numero valido
 				if (!validInt(args[1])) {
-					player.sendMessage(ChatUtil.c("invalidAmount"));
+					player.sendMessage(ChatUtil.c("invalidAmount").replace("{input}", args[1]));
 					return false;
 				}
 				int amount = Integer.valueOf(args[1]);
@@ -73,7 +73,7 @@ public class CMCommands implements CommandExecutor {
 				
 				// Controlla che l'amount sia un numero valido
 				if (!validInt(args[2])) {
-					sender.sendMessage(ChatUtil.c("invalidAmount"));
+					sender.sendMessage(ChatUtil.c("invalidAmount").replace("{input}", args[2]));
 					return false;
 				}
 				int amount = Integer.valueOf(args[2]);

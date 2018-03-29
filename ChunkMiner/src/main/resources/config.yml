@@ -46,7 +46,7 @@ Messages:
   minerSuccess: "&aOperation successfully finished!"
   minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
   targetFullInventory: "&c{target}'s invantory is full"
-  invalidAmount: "&cThe amount must be an integer number"
+  invalidAmount: "&c'&6{input}&c' is not a valid amount. It must be a positive integer"
   notAllowedHere: "&cYou are not allowed to place the &bChunkMiner &chere!"
   
 # DO NOT TOUCH

@@ -22,12 +22,12 @@ public class MinerItem {
 		main.getLogger().info("Loading ChunkMiner item properties...");
 		// Initialize Item properties
 		
-		// Controlla se il material inserito nel config esiste
+		// Check whether the material in the configuration file is a valid material
 		String materialName = main.getConfig().getString("MinerItem.material");
 		try {
 			material = Material.valueOf(materialName);
 		} catch (IllegalArgumentException e) {
-			main.disable("The Material " + materialName + " does not exist.");
+			main.disable("The Material \"" + materialName + "\" does not exist.");
 			return;
 		}
 		
