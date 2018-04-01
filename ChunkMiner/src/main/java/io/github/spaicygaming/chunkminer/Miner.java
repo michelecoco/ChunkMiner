@@ -1,7 +1,7 @@
 package io.github.spaicygaming.chunkminer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -39,7 +39,7 @@ public class Miner {
 	/**
 	 * The blocks inside the chunk to replace with AIR.
 	 */
-	private List<Block> blocksToRemove = new ArrayList<Block>();
+	private Set<Block> blocksToRemove = new HashSet<Block>();
 	
 	/**
 	 * Scan the blocks inside the chunk and add
@@ -70,7 +70,7 @@ public class Miner {
 					if (ignoreMaterial(currBlock.getType()) || currBlock.getType() == Material.AIR)
 						continue;
 					
-					// Add the blocks to the list of blocks to remove on #mine()
+					// Add the blocks to the set of blocks to remove on #mine()
 					blocksToRemove.add(currBlock);
 				}
 		
@@ -89,7 +89,7 @@ public class Miner {
 	
 	/**
 	 * Returns the amount of blocks in the Chunk that can be removed.
-	 * {@link #chunk} must be called before.
+	 * {@link #mine()} must be called before.
 	 * @return
 	 */
 	public int getBlocksAmount() {

@@ -44,13 +44,21 @@ public class InteractListener implements Listener {
 		
 		// Cancel the event
 		event.setCancelled(true);
+
+		// Update the inventory to prevent glitchy items
 		Player player = event.getPlayer();
+		player.updateInventory();
 		
 		// Return is the player does not have permission
 		if (!player.hasPermission(Const.PERM_PLACE)) {
 			player.sendMessage(ChatUtil.c("noPlacePerms").replace("{perm}", Const.PERM_PLACE));
 			// To prevent glitchy items
-			player.updateInventory();
+			return;
+		}
+		
+		// Return if the player is in a not allowed gamemode (specified in the config.yml)
+		if (!allowedGamemode(player)) {
+			player.sendMessage(ChatUtil.c("notAllowedGamemode").replace("{gamemode}", player.getGameMode().toString()));
 			return;
 		}
 		
@@ -58,7 +66,6 @@ public class InteractListener implements Listener {
 		if (Const.FACTIONS_HOOK && main.isFactionsInstalled()) {
 			if (!canBuildHereFactions(player, event.getClickedBlock().getLocation())) {
 				player.sendMessage(ChatUtil.c("notAllowedHereFactions"));
-				player.updateInventory();
 				return;
 			}
 		}
@@ -83,7 +90,7 @@ public class InteractListener implements Listener {
 		
 		// Remove the ChunkMiner from player's hand
 		player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
-		player.updateInventory();
+		player.updateInventory(); // To prevent glitchy items
 		
 		miner.mine();
 		
@@ -95,36 +102,13 @@ public class InteractListener implements Listener {
 	}
 
 	/**
-	 * Decrease by one the amount of items in the ItemStack
-	 * @param item The ItemStack
-	 * @return the ItemStack with one item less
+	 * Check whether the player is in a allowed gamemode
+	 * to place ChunkMiners
+	 * @param player
+	 * @return true if he is
 	 */
-	private ItemStack removeOneItem(ItemStack item) {
-		ItemStack tempItem = item;
-		int amount = tempItem.getAmount();
-
-		if (amount == 1) {
-			tempItem = null;
-		} else {
-			tempItem.setAmount(amount - 1);
-		}
-		return tempItem;
-	}
-	
-	/**
-	 * Notify all staffers that the player used a ChunkMiner
-	 * @param playerName The name of the player who placed the ChunkMiner
-	 * @param chunk The chunk mined
-	 */
-	private void notifyStaffers(String playerName, Chunk chunk) {
-		for (Player staffer : main.getServer().getOnlinePlayers()) {
-			if (!staffer.hasPermission(Const.PERM_NOTIFY))
-				continue;
-			staffer.sendMessage(ChatUtil.c("minerNotifyStaff").replace("{playerName}", playerName)
-					.replace("{world}", chunk.getWorld().getName())
-					.replace("{x}", String.valueOf(chunk.getX()))
-					.replace("{z}", String.valueOf(chunk.getZ())));
-		}
+	private boolean allowedGamemode(Player player) {
+		return !main.getConfig().getStringList("MainSettings.blockedGamemodes").contains(player.getGameMode().toString());
 	}
 	
 	/**
@@ -160,5 +144,39 @@ public class InteractListener implements Listener {
 		// Not own claim
 		return false;
 	}
+	
+	/**
+	 * Decrease by one the amount of items in the ItemStack
+	 * @param item The ItemStack
+	 * @return the ItemStack with one item less
+	 */
+	private ItemStack removeOneItem(ItemStack item) {
+		ItemStack tempItem = item;
+		int amount = tempItem.getAmount();
+
+		if (amount == 1) {
+			tempItem = null;
+		} else {
+			tempItem.setAmount(amount - 1);
+		}
+		return tempItem;
+	}
+	
+	/**
+	 * Notify all staffers that the player used a ChunkMiner
+	 * @param playerName The name of the player who placed the ChunkMiner
+	 * @param chunk The chunk mined
+	 */
+	private void notifyStaffers(String playerName, Chunk chunk) {
+		for (Player staffer : main.getServer().getOnlinePlayers()) {
+			if (!staffer.hasPermission(Const.PERM_NOTIFY))
+				continue;
+			staffer.sendMessage(ChatUtil.c("minerNotifyStaff").replace("{playerName}", playerName)
+					.replace("{world}", chunk.getWorld().getName())
+					.replace("{x}", String.valueOf(chunk.getX()))
+					.replace("{z}", String.valueOf(chunk.getZ())));
+		}
+	}
+	
 	
 }

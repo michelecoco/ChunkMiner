@@ -19,7 +19,7 @@ public class ChunkMiner extends JavaPlugin {
 	private static ChunkMiner instance;
 	private MinerItem minerItem;
 	
-	private double configVersion = 1.1;
+	private double configVersion = 1.2;
 	
 	public void onEnable() {
 		instance = this;
@@ -31,7 +31,7 @@ public class ChunkMiner extends JavaPlugin {
 		minerItem = new MinerItem(this);
 
 		// Initialize "ignored materials" List
-		getConfig().getStringList("MainSettings.ignoreMaterial")
+		getConfig().getStringList("MainSettings.ignoreMaterials")
 				.forEach(mat -> Const.IGNORED_MATERIALS.add(Material.valueOf(mat)));
 
 		getServer().getPluginManager().registerEvents(new InteractListener(this), this);
@@ -64,8 +64,8 @@ public class ChunkMiner extends JavaPlugin {
 	 */
 	private void checkConfigVersion() {
 		if (getConfig().getDouble("configVersion") < configVersion) {
-			ChatUtil.alert("OUTDATED CONFIG FILE DETECTED, PLEASE DELETE THE OLD ONE!");
-			ChatUtil.alert("NullPointerException may occur, Configuration file (config.yml) loaded.");
+			ChatUtil.alert("OUTDATED config.yml FILE DETECTED, PLEASE DELETE THE OLD ONE!");
+			ChatUtil.alert("You can also manually update it: https://github.com/SpaicyGaming/ChunkMiner/blob/master/ChunkMiner/src/main/resources/config.yml");
 		}
 	}
 	
