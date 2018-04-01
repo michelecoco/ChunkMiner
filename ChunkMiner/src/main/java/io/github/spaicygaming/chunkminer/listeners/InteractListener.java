@@ -1,12 +1,20 @@
 package io.github.spaicygaming.chunkminer.listeners;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import com.massivecraft.factions.Board;
+import com.massivecraft.factions.Conf;
+import com.massivecraft.factions.FLocation;
+import com.massivecraft.factions.FPlayer;
+import com.massivecraft.factions.FPlayers;
+import com.massivecraft.factions.Faction;
 
 import io.github.spaicygaming.chunkminer.ChunkMiner;
 import io.github.spaicygaming.chunkminer.Miner;
@@ -25,7 +33,7 @@ public class InteractListener implements Listener {
 	}
 
 	@EventHandler
-	public void onBlockPlace(PlayerInteractEvent event) {
+	public void onMinerPlace(PlayerInteractEvent event) {
 		// Check the Action
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
@@ -46,6 +54,15 @@ public class InteractListener implements Listener {
 			return;
 		}
 		
+		// FactionsUUID checks
+		if (Const.FACTIONS_HOOK && main.isFactionsInstalled()) {
+			if (!canBuildHereFactions(player, event.getClickedBlock().getLocation())) {
+				player.sendMessage(ChatUtil.c("notAllowedHereFactions"));
+				player.updateInventory();
+				return;
+			}
+		}
+		
 		/*
 		 * TODO: add a confirm gui
 		 */
@@ -53,7 +70,7 @@ public class InteractListener implements Listener {
 		// Action start message
 		player.sendMessage(ChatUtil.c("minerPlaced"));
 		
-		// The chunk the player is in
+		// The chunk the player placed the miner in
 		Chunk chunk = event.getClickedBlock().getLocation().getChunk();
 		
 		// Scan and mine the chunk
@@ -108,6 +125,40 @@ public class InteractListener implements Listener {
 					.replace("{x}", String.valueOf(chunk.getX()))
 					.replace("{z}", String.valueOf(chunk.getZ())));
 		}
+	}
+	
+	/**
+	 * Check whether the player is allowed by FactionsUUID
+	 * to build at that location
+	 * @param player The player who placed the miner
+	 * @param location The location of the block he interacted with
+	 * @return
+	 */
+	private boolean canBuildHereFactions(Player player, Location location) {
+		final String configSectionName = "MainSettings.hooks.FactionsUUID.allow";
+		
+		// The FPlayer who placed the miner
+		FPlayer factionsPlayer = FPlayers.getInstance().getByPlayer(player);
+
+		// Player is bypassing
+		if (Conf.playersWhoBypassAllProtection.contains(factionsPlayer.getName()) || factionsPlayer.isAdminBypassing())
+			return true;
+
+		// Faction at miner location
+		Faction otherFaction = Board.getInstance().getFactionAt(new FLocation(location));
+
+		// Return true if it's wilderness
+		if (otherFaction.isWilderness())
+			return true;
+
+		// Own claim
+		if (factionsPlayer.getFactionId().equals(otherFaction.getId())) {
+			return main.getConfig().getStringList(configSectionName + ".roles")
+					.contains(factionsPlayer.getRole().toString().toUpperCase());
+		}
+		
+		// Not own claim
+		return false;
 	}
 	
 }

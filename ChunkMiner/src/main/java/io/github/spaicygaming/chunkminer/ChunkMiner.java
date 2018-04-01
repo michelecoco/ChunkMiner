@@ -37,13 +37,11 @@ public class ChunkMiner extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new InteractListener(this), this);
 		getCommand("chunkminer").setExecutor(new CMCommands());
 
+		
 		// WorldGuard hook message
-		if (Const.WORLDGUARD_HOOK) {
-			if (getWorldGuard() != null)
-				getLogger().info("Hooked into WorldGuard");
-			else
-				getLogger().info("Can't hook into WorldGuard, plugin not found");
-		}
+		hookMessage("WorldGuard", Const.WORLDGUARD_HOOK, getWorldGuard() != null);
+		// Factions hook message
+		hookMessage("Factions", Const.FACTIONS_HOOK, isFactionsInstalled());
 		
 		getLogger().info("ChunkMiner has been enabled!");
 	}
@@ -87,6 +85,10 @@ public class ChunkMiner extends JavaPlugin {
 		getServer().getPluginManager().disablePlugin(this);
 	}
 	
+	/**
+	 * Return WorldGuard plugin instance
+	 * @return null if WorldGuard is not installed
+	 */
 	public WorldGuardPlugin getWorldGuard() {
 	    Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 	    
@@ -96,6 +98,25 @@ public class ChunkMiner extends JavaPlugin {
 	    }
 
 	    return (WorldGuardPlugin) plugin;
+	}
+	
+	/**
+	 * Check whether Factions plugin is installed
+	 * @return true if it is
+	 */
+	public boolean isFactionsInstalled() {
+		Plugin factions = getServer().getPluginManager().getPlugin("Factions");
+		
+		return factions != null && factions.isEnabled();
+	}
+	
+	private void hookMessage(String pluginName, boolean configCondition, boolean pluginLoaded) {
+		if (configCondition) {
+			if (pluginLoaded)
+				getLogger().info("Hooked into " + pluginName);
+			else
+				getLogger().info("Can't hook into " + pluginName + ", plugin not found");
+		}
 	}
 	
 }

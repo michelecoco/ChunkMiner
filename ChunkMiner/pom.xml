@@ -4,7 +4,7 @@
 
 	<groupId>io.github.spaicygaming</groupId>
 	<artifactId>chunkminer</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>ChunkMiner</name>
@@ -21,7 +21,7 @@
 	</properties>
 
 	<build>
-		<finalName>ChunkMiner-v${project.version}</finalName>
+		<finalName>${project.name}-v${project.version}</finalName>
 
 		<resources>
 			<resource>
@@ -53,6 +53,12 @@
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
+
+		<repository>
+			<id>factions-repo</id>
+			<url>http://ci.ender.zone/plugin/repository/everything/</url>
+		</repository>
+
 	</repositories>
 
 	<dependencies>
@@ -67,6 +73,14 @@
 			<groupId>com.sk89q.worldguard</groupId>
 			<artifactId>worldguard-legacy</artifactId>
 			<version>6.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.massivecraft</groupId>
+			<artifactId>Factions</artifactId>
+			<version>1.6.9.5-U0.2.1-RC2</version>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>

@@ -14,9 +14,21 @@ MainSettings:
   hooks:
     # true = players are not allowed to place chunk miners in protected regions
     WorldGuard: true
+    
+    FactionsUUID:
+      enabled: true
+      
+      allow:  
+        # Players with one of these roles are allowed to place chunk miners in their faction claims
+        # ADMIN, COLEADER, MODERATOR, NORMAL, RECRUIT
+        # (if you are using an outdated FactionsUUID version you may not have COLEADER and RECRUIT)
+        roles:
+        - ADMIN
+        - COLEADER
+        - MODERATOR
   
 MinerItem:
-  # MUST be a block
+  # it doesn't have to be a block
   material: COBBLESTONE
   displayName: "&5ChunkMiner"
   lore:
@@ -47,7 +59,8 @@ Messages:
   minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
   targetFullInventory: "&c{target}'s invantory is full"
   invalidAmount: "&c'&6{input}&c' is not a valid amount. It must be a positive integer"
-  notAllowedHere: "&cYou are not allowed to place the &bChunkMiner &chere!"
+  notAllowedHereWorldGuard: "&cYou are not allowed to place &bChunkMiners &chere!"
+  notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
   
 # DO NOT TOUCH
 configVersion: 1.1
