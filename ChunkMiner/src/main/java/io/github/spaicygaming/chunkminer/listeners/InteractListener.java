@@ -56,6 +56,13 @@ public class InteractListener implements Listener {
 			return;
 		}
 		
+		// Return if the player tried to place the miner in a blacklisted world
+		String worldName = player.getWorld().getName();
+		if (main.getConfig().getStringList("MainSettings.blacklistedWorlds").contains(worldName)) {
+			player.sendMessage(ChatUtil.c("blacklistedWorld").replace("{world}", worldName));
+			return;
+		}
+		
 		// Return if the player is in a not allowed gamemode (specified in the config.yml)
 		if (!allowedGamemode(player)) {
 			player.sendMessage(ChatUtil.c("notAllowedGamemode")

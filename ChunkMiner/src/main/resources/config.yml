@@ -14,12 +14,15 @@ MainSettings:
   ignoreMaterials:
    - ENDER_CHEST
   
+  # Prevent players from using ChunkMiners in the listed worlds
+  blacklistedWorlds:
+  - world_without_miners
+  
   # Prevent players from placing miners while they are in one of the listed gamemodes
   # allowed values: CREATIVE - SURVIVAL - ADVENTURE - SPECTATOR
   blockedGamemodes:
   - CREATIVE
-  
-  
+    
   hooks:
     # true = players are not allowed to place chunk miners in protected regions
     WorldGuard: true
@@ -70,6 +73,7 @@ Messages:
   targetFullInventory: "&c{target}'s invantory is full"
   notAllowedGamemode: "&cYou can't place &bChunkMiners &cwhile you are in gamemode &6{gamemode}"
   invalidAmount: "&c'&6{input}&c' is not a valid amount. It must be a positive integer"
+  blacklistedWorld: "&cYou are not allowed to place &bChunkMiners &c in this world! &7({world})"
   notAllowedHereWorldGuard: "&cYou are not allowed to place &bChunkMiners &chere!"
   notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
   
