@@ -20,6 +20,14 @@ public class ChatUtil {
 	private static String prefix = color("Messages.prefix") + ChatColor.RESET + " ";
 	
 	/**
+	 * Return the chat prefix specified in the configuration file
+	 * @return
+	 */
+	public static String getPrefix() {
+		return prefix;
+	}
+	
+	/**
 	 * Color the String translating it to ChatColor using the character '&'
 	 * @param string
 	 * @return the colored string

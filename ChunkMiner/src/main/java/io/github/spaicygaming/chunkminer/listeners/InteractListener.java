@@ -184,7 +184,7 @@ public class InteractListener implements Listener {
 	 */
 	private void notifyStaffers(String playerName, Chunk chunk) {
 		for (Player staffer : main.getServer().getOnlinePlayers()) {
-			if (!staffer.hasPermission(Const.PERM_NOTIFY))
+			if (!staffer.hasPermission(Const.PERM_NOTIFY_ON_USE))
 				continue;
 			staffer.sendMessage(ChatUtil.c("minerNotifyStaff").replace("{playerName}", playerName)
 					.replace("{world}", chunk.getWorld().getName())

@@ -10,6 +10,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import io.github.spaicygaming.chunkminer.cmd.CMCommands;
 import io.github.spaicygaming.chunkminer.listeners.InteractListener;
+import io.github.spaicygaming.chunkminer.listeners.JoinListener;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
 import io.github.spaicygaming.chunkminer.util.Const;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
@@ -18,6 +19,7 @@ public class ChunkMiner extends JavaPlugin {
 
 	private static ChunkMiner instance;
 	private MinerItem minerItem;
+	private UpdateChecker updateChecker;
 	
 	private double configVersion = 1.3;
 	
@@ -43,6 +45,13 @@ public class ChunkMiner extends JavaPlugin {
 		// Factions hook message
 		hookMessage("Factions", Const.FACTIONS_HOOK, isFactionsInstalled());
 		
+		// Update Checker
+		if (Const.NOTIFY_UPDATES) {
+			checkForUpdates();
+			getServer().getPluginManager().registerEvents(new JoinListener(getUpdateChecker()), this);
+		}
+
+		
 		getLogger().info("ChunkMiner has been enabled!");
 	}
 	
@@ -67,6 +76,30 @@ public class ChunkMiner extends JavaPlugin {
 			ChatUtil.alert("OUTDATED config.yml FILE DETECTED, PLEASE DELETE THE OLD ONE!");
 			ChatUtil.alert("You can also manually update it: https://github.com/SpaicyGaming/ChunkMiner/blob/master/ChunkMiner/src/main/resources/config.yml");
 		}
+	}
+	
+	/**
+	 * Check for updates and notify the console
+	 */
+	private void checkForUpdates() {
+		getLogger().info("Checking for updates...");
+		updateChecker = new UpdateChecker(Double.parseDouble(getDescription().getVersion()));
+
+		if (updateChecker.availableUpdate()) {
+			ChatUtil.alert("New version available!");
+			ChatUtil.alert("Your version: " + getUpdateChecker().getCurrentVersion());
+			ChatUtil.alert("Latest version: " + getUpdateChecker().getLatestVersion());
+		} else
+			getLogger().info("No new version available :(");
+	}
+
+	/**
+	 * Return the instance of UpdateChecker.
+	 * 
+	 * @return null if update checking is disabled from the config.yml
+	 */
+	public UpdateChecker getUpdateChecker() {
+		return updateChecker;
 	}
 	
 	/**

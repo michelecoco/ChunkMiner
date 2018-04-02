@@ -77,5 +77,8 @@ Messages:
   notAllowedHereWorldGuard: "&cYou are not allowed to place &bChunkMiners &chere!"
   notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
   
+# Recommended! The plugin notify you if there is a new update. (Checks only on startup)
+CheckForUpdates: true
+
 # DO NOT TOUCH
 configVersion: 1.3

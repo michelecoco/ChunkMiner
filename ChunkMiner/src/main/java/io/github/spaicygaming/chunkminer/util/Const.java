@@ -11,6 +11,9 @@ public class Const {
 	
 	private static ChunkMiner main = ChunkMiner.getInstance();
 	
+	// Check for updates?
+	public static boolean NOTIFY_UPDATES = main.getConfig().getBoolean("CheckForUpdates");
+	
 	// The min height the miner starts mine from
 	public static int MIN_HEIGHT = main.getConfig().getInt("MainSettings.minHeight");
 	
@@ -28,8 +31,9 @@ public class Const {
 	public static final String PERM_PLACE = "chunkminer.place";
 	
 	// Staff Permissions
-	public static final String PERM_NOTIFY = "chunkminer.notify";
 	public static final String PERM_GET = "chunkminer.get";
 	public static final String PERM_GIVE = "chunkminer.give";
+	public static final String PERM_NOTIFY_ON_USE = "chunkminer.notify.onuse"; // get notified when a player use a ChunkMiner
+	public static final String PERM_NOTIFY_UPDATES = "chunkminer.notify.updates";
 	
 }
