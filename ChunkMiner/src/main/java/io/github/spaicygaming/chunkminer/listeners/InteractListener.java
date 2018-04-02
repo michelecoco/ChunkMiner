@@ -80,7 +80,7 @@ public class InteractListener implements Listener {
 		// The chunk the player placed the miner in
 		Chunk chunk = event.getClickedBlock().getLocation().getChunk();
 		
-		// Scan and mine the chunk
+		// Scan the chunk
 		Miner miner = new Miner(chunk, player, main.getWorldGuard());
 		// If the player is not allowed to build in this region...
 		if (!miner.scan()) {
@@ -88,10 +88,17 @@ public class InteractListener implements Listener {
 			return;
 		}
 		
+		// Chunk already mined
+		if (miner.getBlocksAmount() == 0) {
+			player.sendMessage(ChatUtil.c("chunkAlreadyMined"));
+			return;
+		}
+		
 		// Remove the ChunkMiner from player's hand
 		player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
 		player.updateInventory(); // To prevent glitchy items
 		
+		// Mine the chunk
 		miner.mine();
 		
 		// Action finished Message

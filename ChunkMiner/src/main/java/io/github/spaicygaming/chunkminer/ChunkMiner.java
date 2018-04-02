@@ -19,7 +19,7 @@ public class ChunkMiner extends JavaPlugin {
 	private static ChunkMiner instance;
 	private MinerItem minerItem;
 	
-	private double configVersion = 1.2;
+	private double configVersion = 1.3;
 	
 	public void onEnable() {
 		instance = this;

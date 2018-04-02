@@ -62,6 +62,7 @@ Messages:
   itemReceived: "&aYou received &6{amount}x &bChunkMiner"
   minerPlaced: "&aYou placed a &bChunkMiner&a! &7Starting operation..."
   minerSuccess: "&aOperation successfully finished!"
+  chunkAlreadyMined: "&cOperation cancelled! This chunk seems to be already been mined!"
   minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
   targetFullInventory: "&c{target}'s invantory is full"
   notAllowedGamemode: "&cYou can't place &bChunkMiners &cwhile you are in gamemode &6{gamemode}"
@@ -70,4 +71,4 @@ Messages:
   notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
   
 # DO NOT TOUCH
-configVersion: 1.2
+configVersion: 1.3
