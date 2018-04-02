@@ -17,16 +17,19 @@ public class Const {
 	// The miner ignores blocks of one of these materials
 	public static List<Material> IGNORED_MATERIALS = new ArrayList<>();
 	
+	// Console name
+	public static String CONSOLE_NAME = main.getConfig().getString("MainSettings.consoleName");
+	
 	// Hooks
 	public static boolean WORLDGUARD_HOOK = main.getConfig().getBoolean("MainSettings.hooks.WorldGuard");
 	public static boolean FACTIONS_HOOK = main.getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled");
 	
 	// Users Permissions
-	public final static String PERM_PLACE = "chunkminer.place";
+	public static final String PERM_PLACE = "chunkminer.place";
 	
 	// Staff Permissions
-	public final static String PERM_NOTIFY = "chunkminer.notify";
-	public final static String PERM_GET = "chunkminer.get";
-	public final static String PERM_GIVE = "chunkminer.give";
+	public static final String PERM_NOTIFY = "chunkminer.notify";
+	public static final String PERM_GET = "chunkminer.get";
+	public static final String PERM_GIVE = "chunkminer.give";
 	
 }

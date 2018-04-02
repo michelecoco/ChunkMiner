@@ -3,6 +3,7 @@ package io.github.spaicygaming.chunkminer.cmd;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.spaicygaming.chunkminer.ChunkMiner;
@@ -87,10 +88,17 @@ public class CMCommands implements CommandExecutor {
 				// Dà il chnk miner
 				main.getMinerItem().give(target, amount);
 				
-				// Messages
+				// Giver Message
 				sender.sendMessage(ChatUtil.c("itemGived").replace("{target}", targetName)
 						.replace("{amount}", String.valueOf(amount)));
-				target.sendMessage(ChatUtil.c("itemReceivedOther").replace("{giver}", sender.getName())
+				
+				// Sender Name
+				String senderName = sender.getName();
+				if (sender instanceof ConsoleCommandSender)
+					senderName = Const.CONSOLE_NAME;
+				
+				// Target message
+				target.sendMessage(ChatUtil.c("itemReceivedOther").replace("{giver}", senderName)
 						.replace("{amount}", String.valueOf(amount)));
 				
 				return true;

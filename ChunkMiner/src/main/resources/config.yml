@@ -7,6 +7,9 @@ MainSettings:
   # receive the message "minerNotifyStaff" (see below in the "Messages" section)
   notify: true
   
+  # What appears in messages instead of "CONSOLE"
+  consoleName: "Console"
+  
   # Blocks with the following materials are not removed
   ignoreMaterials:
    - ENDER_CHEST
