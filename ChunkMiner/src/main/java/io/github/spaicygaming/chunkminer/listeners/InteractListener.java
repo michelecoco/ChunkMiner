@@ -58,7 +58,8 @@ public class InteractListener implements Listener {
 		
 		// Return if the player is in a not allowed gamemode (specified in the config.yml)
 		if (!allowedGamemode(player)) {
-			player.sendMessage(ChatUtil.c("notAllowedGamemode").replace("{gamemode}", player.getGameMode().toString()));
+			player.sendMessage(ChatUtil.c("notAllowedGamemode")
+					.replace("{gamemode}", ChatUtil.capitalizeFirstChar(player.getGameMode().toString())));
 			return;
 		}
 		

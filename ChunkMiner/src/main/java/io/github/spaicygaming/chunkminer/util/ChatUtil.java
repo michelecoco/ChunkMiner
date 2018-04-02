@@ -68,6 +68,17 @@ public class ChatUtil {
 	}
 
 	/**
+	 * Return the string with the first letter capitalized.
+	 * The strign must be at least one character long.
+	 * @param str
+	 * @return
+	 */
+	public static String capitalizeFirstChar(String str) {
+		str = str.toLowerCase();
+		return str.substring(0, 1).toUpperCase() + str.substring(1);
+	}
+	
+	/**
 	 * Send an alert message to the ConsoleSender
 	 * @param message The message to display
 	 */
