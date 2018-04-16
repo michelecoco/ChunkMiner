@@ -5,6 +5,9 @@
 .project
 /.settings/
 
+# IDEA
+.idea/
+
 # Ant
 /.externalToolBuilders/
 
