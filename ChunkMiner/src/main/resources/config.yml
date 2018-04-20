@@ -74,6 +74,7 @@ Messages:
   notAllowedGamemode: "&cYou can't place &bChunkMiners &cwhile you are in gamemode &6{gamemode}"
   invalidAmount: "&c'&6{input}&c' is not a valid amount. It must be a positive integer"
   blacklistedWorld: "&cYou are not allowed to place &bChunkMiners &c in this world! &7({world})"
+  currentlyProcessed: "&cThere is currently a mining process in this Chunk!"
   notAllowedHereWorldGuard: "&cYou are not allowed to place &bChunkMiners &chere!"
   notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
   
@@ -81,4 +82,4 @@ Messages:
 CheckForUpdates: true
 
 # DO NOT TOUCH
-configVersion: 1.3
+configVersion: 1.4

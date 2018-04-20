@@ -8,10 +8,14 @@ import io.github.spaicygaming.chunkminer.util.ChatUtil;
 import io.github.spaicygaming.chunkminer.util.Const;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class ChunkMiner extends JavaPlugin {
 
@@ -19,7 +23,15 @@ public class ChunkMiner extends JavaPlugin {
     private MinerItem minerItem;
     private UpdateChecker updateChecker;
 
-    private double configVersion = 1.3;
+    /**
+     * Chunks currently processed (scanning or mining operation in progress)
+     */
+    private Set<Chunk> currentlyProcessedChunks = new HashSet<>();
+
+    /**
+     * Configuration file version (it's up here simply for reasons of ease)
+     */
+    private double configVersion = 1.4;
 
     public void onEnable() {
         instance = this;
@@ -62,6 +74,13 @@ public class ChunkMiner extends JavaPlugin {
      */
     public MinerItem getMinerItem() {
         return minerItem;
+    }
+
+    /**
+     * @return the set containing the chunks in which there is an operation in progress
+     */
+    public Set<Chunk> getCurrentlyProcessedChunks() {
+        return currentlyProcessedChunks;
     }
 
     /**

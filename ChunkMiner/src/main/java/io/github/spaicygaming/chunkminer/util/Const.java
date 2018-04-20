@@ -13,7 +13,7 @@ public class Const {
     // Check for updates?
     public static boolean NOTIFY_UPDATES = main.getConfig().getBoolean("CheckForUpdates");
 
-    // The min height the miner starts mine from
+    // The min y height the miner starts mine from
     public static int MIN_HEIGHT = main.getConfig().getInt("MainSettings.minHeight");
 
     // The miner ignores blocks of one of these materials

@@ -14,6 +14,11 @@ import java.util.Set;
 public class Miner {
 
     /**
+     * Main class instance
+     */
+    private ChunkMiner main;
+
+    /**
      * The chunk the player placed the miner
      */
     private Chunk chunk;
@@ -29,6 +34,8 @@ public class Miner {
     private WorldGuardPlugin worldGuard;
 
     public Miner(Chunk chunk, Player player, WorldGuardPlugin worldGuard) {
+        this.main = ChunkMiner.getInstance();
+
         this.chunk = chunk;
         this.player = player;
         this.worldGuard = worldGuard;
@@ -41,12 +48,17 @@ public class Miner {
 
     /**
      * Scan the blocks inside the chunk and add
-     * them in {@link #blocksToRemove}
+     * them in {@link #blocksToRemove}.
+     *
+     * While the operation is in progress the chunk is added
+     * to the Set containing currently processed chunks.
      *
      * @return false if the player is not allowed to build in this region
      */
     public boolean scan() {
 //		long actionStart = System.currentTimeMillis();
+        // Add the processed chunk to the Set (see the javadocs for more information)
+        operationStarted();
 
         World world = chunk.getWorld();
 
@@ -73,7 +85,10 @@ public class Miner {
                     blocksToRemove.add(currBlock);
                 }
 
-//		System.out.println("Scan process took " + (System.currentTimeMillis() - actionStart) + "ms");
+        // Remove the chunk from the set
+        operationFinished();
+
+//      System.out.println("Scan process took " + (System.currentTimeMillis() - actionStart) + "ms");
         return true;
     }
 
@@ -98,10 +113,31 @@ public class Miner {
     }
 
     /**
-     * Replace all the blocks with AIR
+     * Replace all the blocks with AIR.
+     *
+     * While the operation is in progress the chunk is added
+     * to the Set containing currently processed chunks.
      */
     public void mine() {
+        operationStarted();
         blocksToRemove.forEach(block -> block.setType(Material.AIR));
+        operationFinished();
+    }
+
+    /**
+     * Add the {@link #chunk} from the Set in the main class
+     * containing all the chunks in which there is an active operation
+     */
+    private void operationStarted() {
+        main.getCurrentlyProcessedChunks().add(chunk);
+    }
+
+    /**
+     * Remove the {@link #chunk} from the Set in the main class
+     * containing all the chunks in which there is an active operation
+     */
+    private void operationFinished() {
+        main.getCurrentlyProcessedChunks().remove(chunk);
     }
 
 }

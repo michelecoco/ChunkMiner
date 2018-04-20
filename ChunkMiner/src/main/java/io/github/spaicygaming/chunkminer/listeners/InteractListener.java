@@ -81,6 +81,12 @@ public class InteractListener implements Listener {
         // The chunk the player placed the miner in
         Chunk chunk = event.getClickedBlock().getLocation().getChunk();
 
+        // Return if there is currently an active process in the chunk
+        if (main.getCurrentlyProcessedChunks().contains(chunk)) {
+            player.sendMessage(ChatUtil.c("currentlyProcessed"));
+            return;
+        }
+
         // Scan the chunk
         Miner miner = new Miner(chunk, player, main.getWorldGuard());
         // If the player is not allowed to build in this region...
