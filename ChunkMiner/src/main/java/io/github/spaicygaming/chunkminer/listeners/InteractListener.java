@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Set;
 
@@ -218,10 +217,8 @@ public class InteractListener implements Listener {
      */
     private void notifyStaffers(String playerName, Chunk chunk) {
         for (Player staffer : main.getServer().getOnlinePlayers()) {
-            if (!staffer.hasPermission(Const.PERM_NOTIFY_ON_USE))
+            if (!staffer.hasPermission(Const.PERM_NOTIFY_ON_USE) || staffer.getName().equals(playerName))
                 continue;
-
-            // TODO: don't send the message to the player who placed the miner (if he is a staffer)
 
             staffer.sendMessage(ChatUtil.c("minerNotifyStaff").replace("{playerName}", playerName)
                     .replace("{world}", chunk.getWorld().getName())

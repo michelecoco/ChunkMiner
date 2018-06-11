@@ -51,7 +51,7 @@ public class Miner {
     /**
      * Scan the blocks inside the chunk and add
      * them in {@link #blocksToRemove}.
-     *
+     * <p>
      * While the operation is in progress the chunk is added
      * to the Set containing currently processed chunks.
      *
@@ -116,7 +116,7 @@ public class Miner {
 
     /**
      * Replace all the blocks with AIR.
-     *
+     * <p>
      * While the operation is in progress the chunk is added
      * to the Set containing currently processed chunks.
      */

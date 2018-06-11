@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * Notify players about plugin updates
- *
  */
 public class JoinListener implements Listener {
 
