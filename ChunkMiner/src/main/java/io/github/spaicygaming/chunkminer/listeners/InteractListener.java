@@ -14,15 +14,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Set;
 
 public class InteractListener implements Listener {
 
     private ChunkMiner main;
     private MinerItem minerItem;
 
+    /**
+     * The maximum amount of ChunkMiners a player can place at once
+     */
+    private int maxMinersAmountAtOnce;
+
     public InteractListener(ChunkMiner main) {
         this.main = main;
         minerItem = main.getMinerItem();
+        maxMinersAmountAtOnce = main.getConfig().getInt("MainSettings.maxAmount");
     }
 
     @EventHandler
@@ -64,6 +73,13 @@ public class InteractListener implements Listener {
             return;
         }
 
+        // Return if the player has reached the max amount of miners he can place at once
+        Set<Chunk> playerOperations = main.getActiveOperations().get(player);
+        if (playerOperations != null && playerOperations.size() == maxMinersAmountAtOnce) {
+            player.sendMessage(ChatUtil.c("maxAmountReached").replace("{max_amount}", Integer.toString(maxMinersAmountAtOnce)));
+            return;
+        }
+
         // FactionsUUID checks
         if (Const.FACTIONS_HOOK && main.isFactionsInstalled())
             if (!canBuildHereFactions(player, event.getClickedBlock().getLocation())) {
@@ -82,7 +98,7 @@ public class InteractListener implements Listener {
         Chunk chunk = event.getClickedBlock().getLocation().getChunk();
 
         // Return if there is currently an active process in the chunk
-        if (main.getCurrentlyProcessedChunks().contains(chunk)) {
+        if (currentlyProcessed(chunk)) {
             player.sendMessage(ChatUtil.c("currentlyProcessed"));
             return;
         }
@@ -95,13 +111,13 @@ public class InteractListener implements Listener {
             return;
         }
 
-        // Chunk already mined
+        // Return if the chunk is already mined
         if (miner.getBlocksAmount() == 0) {
             player.sendMessage(ChatUtil.c("chunkAlreadyMined"));
             return;
         }
 
-        // Remove the ChunkMiner from player's hand
+        // Remove the ChunkMiner item from player's hand
         player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
         player.updateInventory(); // To prevent glitchy items
 
@@ -162,6 +178,21 @@ public class InteractListener implements Listener {
     }
 
     /**
+     * Check whether there is already an operation in that chunk
+     *
+     * @param chunk The chun to check
+     * @return true if the chunk is involved in an operation
+     */
+    private boolean currentlyProcessed(Chunk chunk) {
+        for (Set<Chunk> chunkSet : main.getActiveOperations().values())
+            for (Chunk ch : chunkSet)
+                if (chunk.equals(ch))
+                    return true;
+
+        return false;
+    }
+
+    /**
      * Decrease by one the amount of items in the ItemStack
      *
      * @param item The ItemStack
@@ -189,6 +220,9 @@ public class InteractListener implements Listener {
         for (Player staffer : main.getServer().getOnlinePlayers()) {
             if (!staffer.hasPermission(Const.PERM_NOTIFY_ON_USE))
                 continue;
+
+            // TODO: don't send the message to the player who placed the miner (if he is a staffer)
+
             staffer.sendMessage(ChatUtil.c("minerNotifyStaff").replace("{playerName}", playerName)
                     .replace("{world}", chunk.getWorld().getName())
                     .replace("{x}", String.valueOf(chunk.getX()))

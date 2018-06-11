@@ -3,6 +3,9 @@ MainSettings:
   # the y the miner will start mine from
   minHeight: 1
 
+  # The maximum amount of ChunkMiners a player can place at once
+  maxAmount: 1
+
   # True = when someone place a ChunkMiner all players with the permission 'chunkminer.notify'
   # receive the message "minerNotifyStaff" (see below in the "Messages" section)
   notify: true
@@ -75,6 +78,7 @@ Messages:
   invalidAmount: "&c'&6{input}&c' is not a valid amount. It must be a positive integer"
   blacklistedWorld: "&cYou are not allowed to place &bChunkMiners &c in this world! &7({world})"
   currentlyProcessed: "&cThere is currently a mining process in this Chunk!"
+  maxAmountReached: "&cYou can't place more than &6{max_amount} &bChunkMiners &cat once!"
   notAllowedHereWorldGuard: "&cYou are not allowed to place &bChunkMiners &chere!"
   notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
   

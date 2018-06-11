@@ -8,7 +8,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Miner {
@@ -125,11 +127,17 @@ public class Miner {
     }
 
     /**
-     * Add the {@link #chunk} from the Set in the main class
-     * containing all the chunks in which there is an active operation
+     * Add the {@link #chunk} in the Set containing all the chunks in which there is an active operation
+     * started by the player
      */
     private void operationStarted() {
-        main.getCurrentlyProcessedChunks().add(chunk);
+        Map<Player, Set<Chunk>> operations = main.getActiveOperations();
+
+        if (operations.containsKey(player)) {
+            operations.get(player).add(chunk);
+        } else {
+            operations.put(player, new HashSet<>(Arrays.asList(chunk)));
+        }
     }
 
     /**
@@ -137,7 +145,13 @@ public class Miner {
      * containing all the chunks in which there is an active operation
      */
     private void operationFinished() {
-        main.getCurrentlyProcessedChunks().remove(chunk);
+        Map<Player, Set<Chunk>> operations = main.getActiveOperations();
+
+        if (operations.get(player).size() > 1) {
+            operations.get(player).remove(chunk);
+        } else {
+            operations.remove(player);
+        }
     }
 
 }

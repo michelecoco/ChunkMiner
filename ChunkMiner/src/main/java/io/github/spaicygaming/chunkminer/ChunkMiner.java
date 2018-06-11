@@ -11,10 +11,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class ChunkMiner extends JavaPlugin {
@@ -24,9 +27,10 @@ public class ChunkMiner extends JavaPlugin {
     private UpdateChecker updateChecker;
 
     /**
-     * Chunks currently processed (scanning or mining operation in progress)
+     * Chunks currently processed associated to the players who placed the miners.
+     * (scanning or mining operation in progress)
      */
-    private Set<Chunk> currentlyProcessedChunks = new HashSet<>();
+    private Map<Player, Set<Chunk>> activeOperations = new HashMap<>();
 
     /**
      * Configuration file version (it's up here simply for reasons of ease)
@@ -77,10 +81,10 @@ public class ChunkMiner extends JavaPlugin {
     }
 
     /**
-     * @return the set containing the chunks in which there is an operation in progress
+     * @return the {@link Map} containing players and chunks involved in active scanning and mining operations
      */
-    public Set<Chunk> getCurrentlyProcessedChunks() {
-        return currentlyProcessedChunks;
+    public Map<Player, Set<Chunk>> getActiveOperations() {
+        return activeOperations;
     }
 
     /**
