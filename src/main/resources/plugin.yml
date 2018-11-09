@@ -1,0 +1,15 @@
+main: io.github.spaicygaming.chunkminer.ChunkMiner
+
+name: ChunkMiner
+version: ${project.version}
+depend: [FastAsyncWorldEdit]
+softdepend: [WorldGuard, Factions]
+
+author: SpaicyGaming
+
+api-version: 1.13
+
+commands:
+  chunkminer:
+    description: Main command.
+    aliases: [cminer, miner]
