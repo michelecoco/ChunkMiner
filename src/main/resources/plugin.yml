@@ -2,7 +2,6 @@ main: io.github.spaicygaming.chunkminer.ChunkMiner
 
 name: ChunkMiner
 version: ${project.version}
-depend: [FastAsyncWorldEdit]
 softdepend: [WorldGuard, Factions]
 
 author: SpaicyGaming

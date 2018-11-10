@@ -1,12 +1,10 @@
 package io.github.spaicygaming.chunkminer;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import io.github.spaicygaming.chunkminer.cmd.CMCommands;
-import io.github.spaicygaming.chunkminer.listeners.InteractListener;
-import io.github.spaicygaming.chunkminer.listeners.JoinListener;
+import io.github.spaicygaming.chunkminer.listeners.PlayerInteractListener;
+import io.github.spaicygaming.chunkminer.listeners.PlayerJoinListener;
 import io.github.spaicygaming.chunkminer.miner.MinersManager;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
-import io.github.spaicygaming.chunkminer.util.Const;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -18,7 +16,6 @@ public class ChunkMiner extends JavaPlugin {
     private static ChunkMiner instance;
     private MinerItem minerItem;
     private UpdateChecker updateChecker;
-
 
     /**
      * Latest configuration file (config.yml) version
@@ -32,26 +29,24 @@ public class ChunkMiner extends JavaPlugin {
         saveDefaultConfig();
         checkConfigVersion();
 
+        // Factions Hook
+        hookMessage("Factions", getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled"), isFactionsInstalled());
+
         // Initialize miner item
         minerItem = new MinerItem(this);
 
         // Initialize MinersManager
         MinersManager minersManager = new MinersManager(this);
 
+
         // Register listeners/commands
-        getServer().getPluginManager().registerEvents(new InteractListener(this, minersManager), this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, minersManager, null), this);
         getCommand("chunkminer").setExecutor(new CMCommands(this));
-
-
-        // WorldGuard hook message
-        hookMessage("WorldGuard", Const.WORLDGUARD_HOOK, getWorldGuard() != null);
-        // Factions hook message
-        hookMessage("Factions", Const.FACTIONS_HOOK, isFactionsInstalled());
 
         // Update Checker
         if (getConfig().getBoolean("CheckForUpdates")) {
             checkForUpdates();
-            getServer().getPluginManager().registerEvents(new JoinListener(getUpdateChecker()), this);
+            getServer().getPluginManager().registerEvents(new PlayerJoinListener(getUpdateChecker()), this);
         }
 
         getLogger().info("ChunkMiner has been enabled!");
@@ -118,22 +113,6 @@ public class ChunkMiner extends JavaPlugin {
         cs.sendMessage(ChatColor.RED + ChatUtil.getSeparators('=', 70));
 
         getServer().getPluginManager().disablePlugin(this);
-    }
-
-    /**
-     * Return WorldGuard plugin instance
-     *
-     * @return null if WorldGuard is not installed
-     */
-    public WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-
-        // May be another plugin
-        if (!(plugin instanceof WorldGuardPlugin)) {
-            return null;
-        }
-
-        return (WorldGuardPlugin) plugin;
     }
 
     /**

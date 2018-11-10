@@ -12,11 +12,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 /**
  * Notify players about plugin updates
  */
-public class JoinListener implements Listener {
+public class PlayerJoinListener implements Listener {
 
     private UpdateChecker updateChecker;
 
-    public JoinListener(UpdateChecker updateChecker) {
+    public PlayerJoinListener(UpdateChecker updateChecker) {
         this.updateChecker = updateChecker;
     }
 

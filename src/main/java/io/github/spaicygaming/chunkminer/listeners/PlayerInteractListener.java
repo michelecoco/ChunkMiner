@@ -2,6 +2,7 @@ package io.github.spaicygaming.chunkminer.listeners;
 
 import com.massivecraft.factions.*;
 import io.github.spaicygaming.chunkminer.ChunkMiner;
+import io.github.spaicygaming.chunkminer.hooks.WorldGuardHook;
 import io.github.spaicygaming.chunkminer.miner.Miner;
 import io.github.spaicygaming.chunkminer.miner.MinersManager;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
@@ -16,16 +17,19 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class InteractListener implements Listener {
+public class PlayerInteractListener implements Listener {
 
     private ChunkMiner main;
     private MinerItem minerItem;
     private MinersManager minersManager;
 
-    public InteractListener(ChunkMiner main, MinersManager minersManager) {
+    private WorldGuardHook worldGuardHook;
+
+    public PlayerInteractListener(ChunkMiner main, MinersManager minersManager, WorldGuardHook worldGuardHook) {
         this.main = main;
         this.minerItem = main.getMinerItem();
         this.minersManager = minersManager;
+        this.worldGuardHook = worldGuardHook;
     }
 
     @SuppressWarnings("unused")
@@ -75,7 +79,7 @@ public class InteractListener implements Listener {
         }
 
         // FactionsUUID checks (check if the player is allowed to place the miner in this claim)
-        if (Const.FACTIONS_HOOK && main.isFactionsInstalled())
+        if (performFactionsChecks())
             if (!canBuildHereFactions(player, event.getClickedBlock().getLocation())) {
                 player.sendMessage(ChatUtil.c("notAllowedHereFactions"));
                 return;
@@ -94,8 +98,12 @@ public class InteractListener implements Listener {
             return;
         }
 
+        // Initialize WorldGuardHook if null
+        if (worldGuardHook == null) {
+            worldGuardHook = new WorldGuardHook(main.getConfig().getBoolean("MainSettings.hooks.WorldGuard"));
+        }
         // Initialize the Miner
-        Miner miner = new Miner(chunk, player, main.getWorldGuard(), minersManager);
+        Miner miner = new Miner(chunk, player, minersManager, worldGuardHook);
 
         // Action start message
         player.sendMessage(ChatUtil.c("minerPlaced"));
@@ -106,7 +114,7 @@ public class InteractListener implements Listener {
         // Notify the player if he isn't allowed to build at at least one block location in a WorldGuard region
         // contained in the chunk
         if (!miner.scan()) {
-            player.sendMessage(ChatUtil.c("notAllowedHere"));
+            player.sendMessage(ChatUtil.c("notAllowedHereWorldGuard"));
         } else {
             // Notify the player if there are no blocks to remove (chunk has probably already been mined)
             if (miner.getBlocksAmount() == 0) {
@@ -142,16 +150,20 @@ public class InteractListener implements Listener {
     }
 
     /**
-     * Check whether the player is allowed by FactionsUUID
-     * to build at that location
+     * @return whether to perform FactionsUUID checks
+     */
+    private boolean performFactionsChecks() {
+        return main.getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled") && main.isFactionsInstalled();
+    }
+
+    /**
+     * Check whether the player is allowed by FactionsUUID to build at the given location
      *
      * @param player   The player who placed the miner
      * @param location The location of the block he interacted with
-     * @return true if he is
+     * @return true if he is allowed
      */
     private boolean canBuildHereFactions(Player player, Location location) {
-        final String configSectionName = "MainSettings.hooks.FactionsUUID.allow";
-
         // The FPlayer who placed the miner
         FPlayer factionPlayer = FPlayers.getInstance().getByPlayer(player);
 
@@ -163,13 +175,13 @@ public class InteractListener implements Listener {
         Faction otherFaction = Board.getInstance().getFactionAt(new FLocation(location));
 
         // Return true if it's wilderness
-        if (otherFaction.isWilderness())
+        if (otherFaction.isWilderness() && (!Conf.wildernessDenyBuild || Conf.worldsNoWildernessProtection.contains(location.getWorld().getName())))
             return true;
 
         // Own claim
         if (factionPlayer.getFactionId().equals(otherFaction.getId())) {
-            return main.getConfig().getStringList(configSectionName + ".roles")
-                    .contains(factionPlayer.getRole().toString().toUpperCase());
+            return main.getConfig().getStringList("MainSettings.hooks.FactionsUUID.allow.roles")
+                    .contains(factionPlayer.getRole().name());
         }
 
         // Not own claim

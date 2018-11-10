@@ -1,6 +1,7 @@
 package io.github.spaicygaming.chunkminer.miner;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import io.github.spaicygaming.chunkminer.hooks.WorldGuardHook;
 import io.github.spaicygaming.chunkminer.util.Const;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -34,20 +35,20 @@ public class Miner {
     private UUID playerUniqueId;
 
     /**
-     * WorldGuard instance
+     * WorldGuardHook instance
      */
-    private WorldGuardPlugin worldGuard;
+    private WorldGuardHook worldGuardHook;
 
     /**
      * Set block material to AIR
      */
     private final static Consumer<Block> setAir = block -> block.setType(Material.AIR);
 
-    public Miner(Chunk chunk, Player player, WorldGuardPlugin worldGuard, MinersManager minersManager) {
+    public Miner(Chunk chunk, Player player, MinersManager minersManager, WorldGuardHook worldGuardHook) {
         this.chunk = chunk;
         this.player = player;
         this.playerUniqueId = player.getUniqueId();
-        this.worldGuard = worldGuard;
+        this.worldGuardHook = worldGuardHook;
         this.minersManager = minersManager;
     }
 
@@ -78,13 +79,13 @@ public class Miner {
                                 .mapToObj(pY -> world.getBlockAt(pX, pY, pZ))))
                 .flatMap(Function.identity())
                 .flatMap(Function.identity())
+                .filter(block -> !block.isEmpty())
                 .filter(block -> !minersManager.isMaterialIgnored(block.getType()))
                 .collect(Collectors.toList());
 
-        if (Const.WORLDGUARD_HOOK && worldGuard != null) {
-            // TODO add WG 7+ API support
+        if (worldGuardHook.performChecks()) {
             //noinspection SimplifyStreamApiCallChains for better performance
-            return !blocksToRemove.stream().anyMatch(processedBlock -> !worldGuard.canBuild(player, processedBlock));
+            return !blocksToRemove.stream().map(Block::getLocation).anyMatch(processedBlock -> !worldGuardHook.canBuild(player, processedBlock));
         }
 
         return true;

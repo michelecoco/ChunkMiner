@@ -1,10 +1,9 @@
-/target/
-
-# Eclipse Stuff
-/.settings/
-
 # IDEA
 .idea/
+
+# Maven
+/target/
+*.iml
 
 # Ant
 /.externalToolBuilders/

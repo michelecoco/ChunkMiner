@@ -10,10 +10,6 @@ public class Const {
     These are temporarily here
      */
 
-    // Hooks
-    public static boolean WORLDGUARD_HOOK = main.getConfig().getBoolean("MainSettings.hooks.WorldGuard");
-    public static boolean FACTIONS_HOOK = main.getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled");
-
     // Users Permissions
     public static final String PERM_PLACE = "chunkminer.place";
 

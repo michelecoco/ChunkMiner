@@ -33,7 +33,7 @@ MainSettings:
       enabled: true
 
       allow:
-        # Players with one of these roles are allowed to place chunk miners in their faction claims
+        # Players with one of the listed roles are allowed to place chunk miners in their faction claims.
         # ADMIN, COLEADER, MODERATOR, NORMAL, RECRUIT
         # (if you are using an outdated FactionsUUID version you may not have COLEADER and RECRUIT)
         roles:
@@ -70,7 +70,7 @@ Messages:
   itemReceived: "&aYou received &6{amount}x &bChunkMiner"
   minerPlaced: "&aYou placed a &bChunkMiner&a! &7Starting operation..."
   minerSuccess: "&aOperation successfully finished!"
-  chunkAlreadyMined: "&cOperation cancelled! This chunk seems to be already been mined!"
+  chunkAlreadyMined: "&cOperation cancelled! This chunk seems to be already mined!"
   minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
   targetFullInventory: "&c{target}'s invantory is full"
   notAllowedGamemode: "&cYou can't place &bChunkMiners &cwhile you are in gamemode &6{gamemode}"

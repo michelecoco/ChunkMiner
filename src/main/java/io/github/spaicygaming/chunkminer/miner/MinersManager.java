@@ -36,7 +36,6 @@ public class MinersManager {
 
         this.ignoredMaterials = config.getStringList("ignoreMaterials").stream().map(Material::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
-        ignoredMaterials.add(Material.AIR);
 
         this.minHeght = Math.min(1, config.getInt("minHeight"));
         this.maxMinersAmountAtOnce = config.getInt("maxAmount");
