@@ -1,8 +1,8 @@
 package io.github.spaicygaming.chunkminer.cmd;
 
 import io.github.spaicygaming.chunkminer.ChunkMiner;
+import io.github.spaicygaming.chunkminer.Permission;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
-import io.github.spaicygaming.chunkminer.util.Const;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +35,7 @@ public class CMCommands implements CommandExecutor {
                 }
                 Player player = (Player) sender;
 
-                if (!player.hasPermission(Const.PERM_GET)) {
+                if (!Permission.CMD_GET.has(player)) {
                     player.sendMessage(ChatUtil.c("noCmdPerms"));
                     return false;
                 }
@@ -64,7 +64,7 @@ public class CMCommands implements CommandExecutor {
             // Give command
             if (args[0].equalsIgnoreCase("give")) {
                 // Check permission
-                if (!sender.hasPermission(Const.PERM_GIVE)) {
+                if (!Permission.CMD_GIVE.has(sender)) {
                     sender.sendMessage(ChatUtil.c("noCmdPerms"));
                     return false;
                 }

@@ -2,11 +2,11 @@ package io.github.spaicygaming.chunkminer.listeners;
 
 import com.massivecraft.factions.*;
 import io.github.spaicygaming.chunkminer.ChunkMiner;
+import io.github.spaicygaming.chunkminer.Permission;
 import io.github.spaicygaming.chunkminer.hooks.WorldGuardHook;
 import io.github.spaicygaming.chunkminer.miner.Miner;
 import io.github.spaicygaming.chunkminer.miner.MinersManager;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
-import io.github.spaicygaming.chunkminer.util.Const;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -51,21 +51,20 @@ public class PlayerInteractListener implements Listener {
         player.updateInventory();
 
         // Return is the player does not have permission
-        if (!player.hasPermission(Const.PERM_PLACE)) {
-            player.sendMessage(ChatUtil.c("noPlacePerms").replace("{perm}", Const.PERM_PLACE));
+        if (!Permission.PLACE.has(player)) {
+            player.sendMessage(ChatUtil.c("noPlacePerms").replace("{perm}", Permission.PLACE.toString()));
             return;
         }
 
         // Return if the player tried to place the miner in a blacklisted world and he doesn't have a bypass permission
         String worldName = player.getWorld().getName();
-        if (!player.hasPermission("chunkminer.bypass.worlds")
-                && main.getConfig().getStringList("MainSettings.blacklistedWorlds").contains(worldName)) {
+        if (!Permission.BYPASS_WORLD.has(player) && main.getConfig().getStringList("MainSettings.blacklistedWorlds").contains(worldName)) {
             player.sendMessage(ChatUtil.c("blacklistedWorld").replace("{world}", worldName));
             return;
         }
 
         // Return if the player is in a not allowed gamemode (specified in the configuration file) and he doesn't have a bypass permission
-        if (!player.hasPermission("chunkminer.bypass.gamemodes") && !isInAllowedGamemode(player)) {
+        if (!Permission.BYPASS_GAMEMODE.has(player) && !isInAllowedGamemode(player)) {
             player.sendMessage(ChatUtil.c("notAllowedGamemode")
                     .replace("{gamemode}", ChatUtil.capitalizeFirstChar(player.getGameMode().toString())));
             return;
@@ -214,7 +213,7 @@ public class PlayerInteractListener implements Listener {
      */
     private void notifyStaffMembers(String playerName, Chunk chunk) {
         for (Player staffer : main.getServer().getOnlinePlayers()) {
-            if (!staffer.hasPermission(Const.PERM_NOTIFY_ON_USE) || staffer.getName().equals(playerName))
+            if (!Permission.NOTIFY_ONUSE.has(staffer) || staffer.getName().equals(playerName))
                 continue;
 
             staffer.sendMessage(ChatUtil.c("minerNotifyStaff").replace("{playerName}", playerName)

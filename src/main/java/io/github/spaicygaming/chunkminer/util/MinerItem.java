@@ -68,11 +68,14 @@ public class MinerItem {
      * @return true if it is
      */
     public boolean isSimilar(ItemStack compareItemStack) {
-        if (compareItemStack == null || !compareItemStack.hasItemMeta()) return false;
+        if (compareItemStack == null || !compareItemStack.hasItemMeta())
+            return false;
 
         ItemMeta ciMeta = compareItemStack.getItemMeta();
 
-        return compareItemStack.getType() == material && ciMeta.getDisplayName().equals(displayName) && ciMeta.getLore().equals(lore);
+        return compareItemStack.getType() == material
+                && ciMeta.getDisplayName().equals(displayName)
+                && ciMeta.getLore().equals(lore);
     }
 
 }

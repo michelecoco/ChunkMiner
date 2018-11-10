@@ -45,6 +45,7 @@ public class WorldGuardHook {
      * @param world The Bukkit world
      * @return world's region manager
      */
+    @SuppressWarnings("unused") // will be used in a future version
     public RegionManager getRegionManager(org.bukkit.World world) {
         if (pre7) {
             return worldGuardPlugin.getRegionManager(world);

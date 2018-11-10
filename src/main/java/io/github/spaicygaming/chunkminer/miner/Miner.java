@@ -1,8 +1,6 @@
 package io.github.spaicygaming.chunkminer.miner;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import io.github.spaicygaming.chunkminer.hooks.WorldGuardHook;
-import io.github.spaicygaming.chunkminer.util.Const;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -72,6 +70,10 @@ public class Miner {
         int x = chunk.getX() << 4;
         int z = chunk.getZ() << 4;
 
+        // TODO remove
+        System.out.println("min " + minersManager.getMinHeght());
+        System.out.println("max " + world.getMaxHeight());
+
         blocksToRemove = IntStream.range(x, x + 16)
 //                .parallel()
                 .mapToObj(pX -> IntStream.range(z, z + 16)
@@ -120,7 +122,7 @@ public class Miner {
         if (operations.containsKey(playerUniqueId)) {
             operations.get(playerUniqueId).add(chunk);
         } else {
-            operations.put(playerUniqueId, new HashSet<>(Arrays.asList(chunk)));
+            operations.put(playerUniqueId, Collections.singleton(chunk));
         }
     }
 
