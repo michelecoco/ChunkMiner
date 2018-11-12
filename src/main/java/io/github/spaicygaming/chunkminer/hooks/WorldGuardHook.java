@@ -30,6 +30,12 @@ public class WorldGuardHook {
                 pre7 = true;
             }
         }
+
+        if (integrationEnabled)
+            if (installed)
+                Bukkit.getServer().getLogger().info("Hooked into WorldGard");
+            else
+                Bukkit.getServer().getLogger().info("Can't hook into WorldGuard, plugin not found");
     }
 
     /**

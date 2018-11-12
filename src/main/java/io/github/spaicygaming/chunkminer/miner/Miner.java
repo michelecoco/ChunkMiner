@@ -70,10 +70,6 @@ public class Miner {
         int x = chunk.getX() << 4;
         int z = chunk.getZ() << 4;
 
-        // TODO remove
-        System.out.println("min " + minersManager.getMinHeght());
-        System.out.println("max " + world.getMaxHeight());
-
         blocksToRemove = IntStream.range(x, x + 16)
 //                .parallel()
                 .mapToObj(pX -> IntStream.range(z, z + 16)
@@ -140,4 +136,18 @@ public class Miner {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Miner miner = (Miner) o;
+        return Objects.equals(chunk, miner.chunk) &&
+                Objects.equals(playerUniqueId, miner.playerUniqueId) &&
+                Objects.equals(blocksToRemove, miner.blocksToRemove);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chunk, playerUniqueId, blocksToRemove);
+    }
 }
