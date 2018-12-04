@@ -1,6 +1,8 @@
 package io.github.spaicygaming.chunkminer.hooks;
 
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.extent.Extent;
+import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -9,6 +11,9 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class WorldGuardHook {
 
@@ -71,18 +76,34 @@ public class WorldGuardHook {
         if (pre7) {
             return worldGuardPlugin.canBuild(player, location);
         } else {
-            Vector position;
+            Extent worldEditWorld = worldGuard.getWorldByName(location.getWorld().getName());
+            com.sk89q.worldedit.util.Location worldEditLocation;
+
             try {
-                position = BukkitUtil.toVector(location);
-            } catch (NoClassDefFoundError | NoSuchMethodError err) {
-                position = new Vector(location.getX(), location.getY(), location.getZ());
+                Vector position;
+                try {
+                    position = BukkitUtil.toVector(location);
+                } catch (NoClassDefFoundError | NoSuchMethodError err) {
+                    position = new Vector(location.getX(), location.getY(), location.getZ());
+                }
+
+                worldEditLocation = new com.sk89q.worldedit.util.Location(worldEditWorld, position);
+            }
+            // Support WorldEdit 7.0.0-beta-02+ versions
+            catch (NoClassDefFoundError post7beta02Version) {
+                Class<com.sk89q.worldedit.util.Location> weLocationClass = com.sk89q.worldedit.util.Location.class;
+                try {
+                    //noinspection JavaReflectionMemberAccess
+                    Constructor<com.sk89q.worldedit.util.Location> constructor = weLocationClass.getConstructor(Extent.class, Vector3.class);
+
+                    worldEditLocation = constructor.newInstance(worldEditWorld, Vector3.at(location.getX(), location.getY(), location.getZ()));
+                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    return false;
+                }
             }
 
-            com.sk89q.worldedit.util.Location worldEditLocation = new com.sk89q.worldedit.util.Location(
-                    worldGuard.getWorldByName(location.getWorld().getName()), position, location.getYaw(), location.getPitch());
-
-            return/* worldGuard.getSessionManager().hasBypass(player, location.getWorld())
-                    ||*/ worldGuard.getRegionContainer().createQuery().testBuild(worldEditLocation, worldGuardPlugin.wrapPlayer(player));
+            return worldGuard.getRegionContainer().createQuery().testBuild(worldEditLocation, worldGuardPlugin.wrapPlayer(player));
         }
     }
 
