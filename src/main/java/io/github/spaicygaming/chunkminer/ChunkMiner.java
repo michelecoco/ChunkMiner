@@ -1,6 +1,8 @@
 package io.github.spaicygaming.chunkminer;
 
 import io.github.spaicygaming.chunkminer.cmd.CMCommands;
+import io.github.spaicygaming.chunkminer.hooks.FactionsUUIDIntegration;
+import io.github.spaicygaming.chunkminer.hooks.WorldGuardIntegration;
 import io.github.spaicygaming.chunkminer.listeners.PlayerInteractListener;
 import io.github.spaicygaming.chunkminer.listeners.PlayerJoinListener;
 import io.github.spaicygaming.chunkminer.miner.MinersManager;
@@ -8,7 +10,6 @@ import io.github.spaicygaming.chunkminer.util.ChatUtil;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ChunkMiner extends JavaPlugin {
@@ -16,6 +17,12 @@ public class ChunkMiner extends JavaPlugin {
     private static ChunkMiner instance;
     private MinerItem minerItem;
     private UpdateChecker updateChecker;
+
+    // here for future usage
+    @SuppressWarnings("FieldCanBeLocal")
+    private WorldGuardIntegration worldGuardIntegration;
+    @SuppressWarnings("FieldCanBeLocal")
+    private FactionsUUIDIntegration factionsUUIDIntegration;
 
     /**
      * Latest configuration file (config.yml) version
@@ -29,18 +36,21 @@ public class ChunkMiner extends JavaPlugin {
         saveDefaultConfig();
         checkConfigVersion();
 
-        // Factions Hook
-        hookMessage("Factions", getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled"), isFactionsInstalled());
+        // Initialize WorldGuard integration
+        this.worldGuardIntegration = new WorldGuardIntegration(getConfig().getBoolean("MainSettings.hooks.WorldGuard"));
+        // Initialize Factions integration
+        this.factionsUUIDIntegration = new FactionsUUIDIntegration(getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled"),
+                getConfig().getStringList("MainSettings.hooks.FactionsUUID.allow.roles"));
 
         // Initialize miner item
-        minerItem = new MinerItem(this);
+        this.minerItem = new MinerItem(this);
 
         // Initialize MinersManager
         MinersManager minersManager = new MinersManager(this);
 
 
         // Register listeners/commands
-        getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, minersManager, null), this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, minersManager, worldGuardIntegration, factionsUUIDIntegration), this);
         getCommand("chunkminer").setExecutor(new CMCommands(this));
 
         // Update Checker
@@ -64,8 +74,8 @@ public class ChunkMiner extends JavaPlugin {
     }
 
     /**
-     * Check the configuration file version.
-     * Notify the ConsoleSender if the config.yml is outdated
+     * Checks the configuration file version.
+     * Notifies the ConsoleSender if the config.yml is outdated
      */
     private void checkConfigVersion() {
         if (getConfig().getDouble("configVersion") < configVersion) {
@@ -75,7 +85,7 @@ public class ChunkMiner extends JavaPlugin {
     }
 
     /**
-     * Check for updates and notify the console
+     * Checks for updates and notifies the console if there is an available update
      */
     private void checkForUpdates() {
         getLogger().info("Checking for updates...");
@@ -90,7 +100,7 @@ public class ChunkMiner extends JavaPlugin {
     }
 
     /**
-     * Return the instance of UpdateChecker.
+     * Gets the only instance of UpdateChecker.
      *
      * @return null if update checking is disabled from the config.yml
      */
@@ -99,9 +109,9 @@ public class ChunkMiner extends JavaPlugin {
     }
 
     /**
-     * Disable the plugin and send fancy messages to the console
+     * Disables the plugin and send fancy messages to the console
      *
-     * @param reason The reason why the plugin has been disabled
+     * @param reason the reason why the plugin has been disabled
      */
     public void disable(String reason) {
         ConsoleCommandSender cs = getServer().getConsoleSender();
@@ -113,26 +123,6 @@ public class ChunkMiner extends JavaPlugin {
         cs.sendMessage(ChatColor.RED + ChatUtil.getSeparators('=', 70));
 
         getServer().getPluginManager().disablePlugin(this);
-    }
-
-    /**
-     * Check whether Factions plugin is installed
-     *
-     * @return true if it is
-     */
-    public boolean isFactionsInstalled() {
-        Plugin factions = getServer().getPluginManager().getPlugin("Factions");
-
-        return factions != null && factions.isEnabled();
-    }
-
-    private void hookMessage(String pluginName, boolean configCondition, boolean pluginLoaded) {
-        if (configCondition) {
-            if (pluginLoaded)
-                getLogger().info("Hooked into " + pluginName);
-            else
-                getLogger().info("Can't hook into " + pluginName + ", plugin not found");
-        }
     }
 
 }

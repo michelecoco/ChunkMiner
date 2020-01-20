@@ -45,14 +45,25 @@ public class UpdateChecker {
         }
     }
 
+    /**
+     * Checks whether there is are available updates
+     *
+     * @return true if there is at least one
+     */
     public boolean availableUpdate() {
         return latestVersion > currentVersion;
     }
 
+    /**
+     * @return the running plugin's version
+     */
     public double getCurrentVersion() {
         return currentVersion;
     }
 
+    /**
+     * @return the last plugin release version
+     */
     public double getLatestVersion() {
         return latestVersion;
     }

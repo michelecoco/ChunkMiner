@@ -45,7 +45,7 @@ public class CMCommands implements CommandExecutor {
                     player.sendMessage(ChatUtil.c("invalidAmount").replace("{input}", args[1]));
                     return false;
                 }
-                int amount = Integer.valueOf(args[1]);
+                int amount = Integer.parseInt(args[1]);
 
                 // Give chunk miner item(s)
                 main.getMinerItem().give(player, amount);
@@ -84,7 +84,7 @@ public class CMCommands implements CommandExecutor {
                     sender.sendMessage(ChatUtil.c("invalidAmount").replace("{input}", args[2]));
                     return false;
                 }
-                int amount = Integer.valueOf(args[2]);
+                int amount = Integer.parseInt(args[2]);
 
                 // Return if target's inventory is full
                 if (target.getInventory().firstEmpty() == -1) {
@@ -121,16 +121,16 @@ public class CMCommands implements CommandExecutor {
     }
 
     /**
-     * Send the commands help menu
+     * Sends the commands help menu
      *
-     * @param sender The CommandSender who send the menu to
+     * @param sender the CommandSender who send the menu to
      */
     private void printHelpMenu(CommandSender sender) {
         helpMenu.forEach(sender::sendMessage);
     }
 
     /**
-     * Check whether the string is an integer greater than 0
+     * Checks whether the string is an integer greater than 0
      *
      * @param userInput The String to check
      * @return true if it isn't
@@ -138,7 +138,7 @@ public class CMCommands implements CommandExecutor {
     private boolean invalidInt(String userInput) {
         int input;
         try {
-            input = Integer.valueOf(userInput);
+            input = Integer.parseInt(userInput);
         } catch (NumberFormatException e) {
             return true;
         }

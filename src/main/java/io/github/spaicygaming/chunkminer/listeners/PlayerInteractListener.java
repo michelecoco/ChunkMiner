@@ -1,15 +1,14 @@
 package io.github.spaicygaming.chunkminer.listeners;
 
-import com.massivecraft.factions.*;
 import io.github.spaicygaming.chunkminer.ChunkMiner;
 import io.github.spaicygaming.chunkminer.Permission;
-import io.github.spaicygaming.chunkminer.hooks.WorldGuardHook;
+import io.github.spaicygaming.chunkminer.hooks.FactionsUUIDIntegration;
+import io.github.spaicygaming.chunkminer.hooks.WorldGuardIntegration;
 import io.github.spaicygaming.chunkminer.miner.Miner;
 import io.github.spaicygaming.chunkminer.miner.MinersManager;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,13 +22,15 @@ public class PlayerInteractListener implements Listener {
     private MinerItem minerItem;
     private MinersManager minersManager;
 
-    private WorldGuardHook worldGuardHook;
+    private WorldGuardIntegration worldGuardIntegration;
+    private FactionsUUIDIntegration factionsUUIDIntegration;
 
-    public PlayerInteractListener(ChunkMiner main, MinersManager minersManager, WorldGuardHook worldGuardHook) {
+    public PlayerInteractListener(ChunkMiner main, MinersManager minersManager, WorldGuardIntegration worldGuardIntegration, FactionsUUIDIntegration factionsUUIDIntegration) {
         this.main = main;
         this.minerItem = main.getMinerItem();
         this.minersManager = minersManager;
-        this.worldGuardHook = worldGuardHook;
+        this.worldGuardIntegration = worldGuardIntegration;
+        this.factionsUUIDIntegration = factionsUUIDIntegration;
     }
 
     @SuppressWarnings("unused")
@@ -78,8 +79,8 @@ public class PlayerInteractListener implements Listener {
         }
 
         // FactionsUUID checks (check if the player is allowed to place the miner in this claim)
-        if (performFactionsChecks())
-            if (!canBuildHereFactions(player, event.getClickedBlock().getLocation())) {
+        if (factionsUUIDIntegration.shouldPerformChecks())
+            if (!factionsUUIDIntegration.canBuildHere(player, event.getClickedBlock().getLocation())) {
                 player.sendMessage(ChatUtil.c("notAllowedHereFactions"));
                 return;
             }
@@ -97,12 +98,8 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        // Initialize WorldGuardHook if null
-        if (worldGuardHook == null) {
-            worldGuardHook = new WorldGuardHook(main.getConfig().getBoolean("MainSettings.hooks.WorldGuard"));
-        }
         // Initialize the Miner
-        Miner miner = new Miner(chunk, player, minersManager, worldGuardHook);
+        Miner miner = new Miner(chunk, player, minersManager, worldGuardIntegration);
 
         // Action start message
         player.sendMessage(ChatUtil.c("minerPlaced"));
@@ -123,10 +120,11 @@ public class PlayerInteractListener implements Listener {
                 miner.mine();
 
                 // Remove the ChunkMiner item from player's hand
+                //noinspection deprecation - backward compatibility
                 player.getInventory().setItemInHand(removeOneItem(player.getInventory().getItemInHand()));
                 player.updateInventory(); // To prevent glitchy items
 
-                // Action finished Message
+                // Send action finished Message
                 player.sendMessage(ChatUtil.c("minerSuccess"));
 
                 // Notify staff members that someone placed a ChunkMiner
@@ -138,60 +136,20 @@ public class PlayerInteractListener implements Listener {
     }
 
     /**
-     * Check whether the player is in a allowed gamemode
-     * to place ChunkMiners
+     * Checks whether ChunkMiners can be placed while in player's gamemode
      *
-     * @param player The player whose gamemode check
-     * @return true if he is
+     * @param player the player whose gamemode check
+     * @return true if he is in an allowed gamemode
      */
     private boolean isInAllowedGamemode(Player player) {
         return !main.getConfig().getStringList("MainSettings.blockedGamemodes").contains(player.getGameMode().toString());
     }
 
     /**
-     * @return whether to perform FactionsUUID checks
-     */
-    private boolean performFactionsChecks() {
-        return main.getConfig().getBoolean("MainSettings.hooks.FactionsUUID.enabled") && main.isFactionsInstalled();
-    }
-
-    /**
-     * Check whether the player is allowed by FactionsUUID to build at the given location
+     * Decreases by one the amount of items in the ItemStack
      *
-     * @param player   The player who placed the miner
-     * @param location The location of the block he interacted with
-     * @return true if he is allowed
-     */
-    private boolean canBuildHereFactions(Player player, Location location) {
-        // The FPlayer who placed the miner
-        FPlayer factionPlayer = FPlayers.getInstance().getByPlayer(player);
-
-        // Player can bypass factions restrictions
-        if (Conf.playersWhoBypassAllProtection.contains(factionPlayer.getName()) || factionPlayer.isAdminBypassing())
-            return true;
-
-        // The Faction that owns the chunk at miner location
-        Faction otherFaction = Board.getInstance().getFactionAt(new FLocation(location));
-
-        // Return true if it's wilderness
-        if (otherFaction.isWilderness() && (!Conf.wildernessDenyBuild || Conf.worldsNoWildernessProtection.contains(location.getWorld().getName())))
-            return true;
-
-        // Own claim
-        if (factionPlayer.getFactionId().equals(otherFaction.getId())) {
-            return main.getConfig().getStringList("MainSettings.hooks.FactionsUUID.allow.roles")
-                    .contains(factionPlayer.getRole().name());
-        }
-
-        // Not own claim
-        return false;
-    }
-
-    /**
-     * Decrease by one the amount of items in the ItemStack
-     *
-     * @param item The ItemStack
-     * @return the ItemStack with one item less
+     * @param item the ItemStack
+     * @return a new ItemStack instance with one item less, null if the given ItemStack contained only one item
      */
     private ItemStack removeOneItem(ItemStack item) {
         ItemStack itemResult = item;
@@ -206,10 +164,11 @@ public class PlayerInteractListener implements Listener {
     }
 
     /**
-     * Notify all staff members that someone used a ChunkMiner
+     * Notifies all staff members that someone used a ChunkMiner.
+     * Sends a message specified in the configuration file.
      *
-     * @param playerName The name of the player who placed the ChunkMiner
-     * @param chunk      The chunk mined
+     * @param playerName the name of the player who placed the ChunkMiner
+     * @param chunk      the chunk mined
      */
     private void notifyStaffMembers(String playerName, Chunk chunk) {
         for (Player staffer : main.getServer().getOnlinePlayers()) {

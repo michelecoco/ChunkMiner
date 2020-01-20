@@ -18,7 +18,7 @@ public class MinersManager {
     /**
      * The lowest y height the miner starts mine from (1 is the minimum allowed value)
      */
-    private int minHeght;
+    private int minHeight;
 
     /**
      * The maximum amount of ChunkMiners a player can place at once
@@ -37,12 +37,12 @@ public class MinersManager {
         this.ignoredMaterials = config.getStringList("ignoreMaterials").stream().map(Material::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
 
-        this.minHeght = Math.max(1, config.getInt("minHeight"));
+        this.minHeight = Math.max(1, config.getInt("minHeight"));
         this.maxMinersAmountAtOnce = config.getInt("maxAmount");
     }
 
-    int getMinHeght() {
-        return minHeght;
+    int getMinHeight() {
+        return minHeight;
     }
 
     public int getMaxMinersAmountAtOnce() {
@@ -51,26 +51,26 @@ public class MinersManager {
 
     /**
      * @return the {@link Map} containing UUIDs of players who have an active miner
-     * and chunks involved in active scanning and mining operations
+     * and chunks involved in active scanning and/or mining operations
      */
     Map<UUID, Set<Chunk>> getActiveOperations() {
         return activeOperations;
     }
 
     /**
-     * Get the active mining operations associated with the player
+     * Gets the active mining operations associated with the player
      *
-     * @param playerUUID Player's UUID
-     * @return an immutable empty set if there isn't any active operation associated to the player
+     * @param playerUUID player's UUID
+     * @return an immutable empty set if there isn't any active operation associated with the player
      */
     public Set<Chunk> getActiveOperations(UUID playerUUID) {
         return Optional.ofNullable(activeOperations.get(playerUUID)).orElse(Collections.emptySet());
     }
 
     /**
-     * Check whether there is a running operation in the given chunk
+     * Checks whether there is a running operation in the given chunk
      *
-     * @param chunk The chunk to check
+     * @param chunk the chunk to check
      * @return true if the chunk is involved in an operation
      */
     public boolean isCurrentlyProcessed(Chunk chunk) {
@@ -78,10 +78,10 @@ public class MinersManager {
     }
 
     /**
-     * Check whether blocks with that material should not be removed by miners
+     * Checks whether blocks with the given material must be removed by miners
      *
-     * @param material The material whose presence check
-     * @return true if ignored
+     * @param material the material whose presence check
+     * @return true if it must't be removed
      */
     boolean isMaterialIgnored(Material material) {
         return ignoredMaterials.contains(material);

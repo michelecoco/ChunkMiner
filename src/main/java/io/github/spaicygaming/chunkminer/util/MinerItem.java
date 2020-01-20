@@ -19,9 +19,9 @@ public class MinerItem {
 
     public MinerItem(ChunkMiner main) {
         main.getLogger().info("Loading ChunkMiner item properties...");
-        // Initialize Item properties
+        // Initializes Item properties
 
-        // Check whether the material in the configuration file is a valid material
+        // Checks whether the material in the configuration file is a valid material
         String materialName = main.getConfig().getString("MinerItem.material");
         try {
             material = Material.valueOf(materialName);
@@ -49,10 +49,10 @@ public class MinerItem {
     }
 
     /**
-     * Give chunk miners to the player
+     * Gives chunk miners to the specified player
      *
-     * @param player The player
-     * @param amount The amount of ChunkMiners
+     * @param player the player
+     * @param amount the amount of ChunkMiners
      */
     public void give(Player player, int amount) {
         ItemStack tempItemStack = item;
@@ -61,11 +61,11 @@ public class MinerItem {
     }
 
     /**
-     * Check whether the ItemStack is a MinerItem.
-     * Ignores ItemStack amount.
+     * Check whether the specified ItemStack is a MinerItem.
+     * NOTE: this method ignores ItemStack amount.
      *
-     * @param compareItemStack The ItemStack to compare
-     * @return true if it is
+     * @param compareItemStack the ItemStack to compare
+     * @return true if it is a miner
      */
     public boolean isSimilar(ItemStack compareItemStack) {
         if (compareItemStack == null || !compareItemStack.hasItemMeta())

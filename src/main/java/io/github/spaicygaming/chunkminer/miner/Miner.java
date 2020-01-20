@@ -1,6 +1,6 @@
 package io.github.spaicygaming.chunkminer.miner;
 
-import io.github.spaicygaming.chunkminer.hooks.WorldGuardHook;
+import io.github.spaicygaming.chunkminer.hooks.WorldGuardIntegration;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -35,34 +35,33 @@ public class Miner {
     /**
      * WorldGuardHook instance
      */
-    private WorldGuardHook worldGuardHook;
+    private WorldGuardIntegration worldGuardIntegration;
 
     /**
-     * Set block material to AIR
+     * Set the given Block's material to AIR
      */
     private final static Consumer<Block> setAir = block -> block.setType(Material.AIR);
 
-    public Miner(Chunk chunk, Player player, MinersManager minersManager, WorldGuardHook worldGuardHook) {
+    public Miner(Chunk chunk, Player player, MinersManager minersManager, WorldGuardIntegration worldGuardIntegration) {
         this.chunk = chunk;
         this.player = player;
         this.playerUniqueId = player.getUniqueId();
-        this.worldGuardHook = worldGuardHook;
+        this.worldGuardIntegration = worldGuardIntegration;
         this.minersManager = minersManager;
     }
 
     /**
-     * List containing the non-ignored blocks inside the chunk to replace with AIR.
+     * A list containing the blocks inside the chunk that must be replaced with AIR.
      */
     private List<Block> blocksToRemove;
 
     /**
-     * Scan the blocks inside the chunk and add
-     * them in {@link #blocksToRemove}.
+     * Scans the blocks inside the chunk and add them in the collection {@link #blocksToRemove}.
      * <p>
-     * While the operation is in progress the chunk is added
-     * to the Set containing currently processed chunks.
+     * While the operation is in progress the chunk should be in the collection containing
+     * every currently processed chunk: {@link MinersManager#getActiveOperations()}
      *
-     * @return false if the player is not allowed to build in this region
+     * @return false if the player is not allowed to build at any location of the chunk
      */
     public boolean scan() {
         World world = chunk.getWorld();
@@ -73,7 +72,7 @@ public class Miner {
         blocksToRemove = IntStream.range(x, x + 16)
 //                .parallel()
                 .mapToObj(pX -> IntStream.range(z, z + 16)
-                        .mapToObj(pZ -> IntStream.rangeClosed(minersManager.getMinHeght(), world.getMaxHeight())
+                        .mapToObj(pZ -> IntStream.rangeClosed(minersManager.getMinHeight(), world.getMaxHeight())
                                 .mapToObj(pY -> world.getBlockAt(pX, pY, pZ))))
                 .flatMap(Function.identity())
                 .flatMap(Function.identity())
@@ -81,16 +80,16 @@ public class Miner {
                 .filter(block -> !minersManager.isMaterialIgnored(block.getType()))
                 .collect(Collectors.toList());
 
-        if (worldGuardHook.performChecks()) {
+        if (worldGuardIntegration.shouldPerformChecks()) {
             //noinspection SimplifyStreamApiCallChains for better performance
-            return !blocksToRemove.stream().map(Block::getLocation).anyMatch(processedBlock -> !worldGuardHook.canBuild(player, processedBlock));
+            return !blocksToRemove.stream().map(Block::getLocation).anyMatch(processedBlock -> !worldGuardIntegration.canBuildHere(player, processedBlock));
         }
 
         return true;
     }
 
     /**
-     * Replace all not-ignored blocks with AIR.
+     * Replaces the blocks with AIR.
      */
     public void mine() {
         // Remove all blocks by iterating the list
@@ -98,8 +97,9 @@ public class Miner {
     }
 
     /**
-     * Returns the amount of blocks in the Chunk that can be removed.
-     * {@link #mine()} must be called before.
+     * Gets the amount of blocks in the Chunk that can be removed.
+     * <p>
+     * NOTE: {@link #mine()} must have been called before, otherwise a NullPointerException is thrown
      *
      * @return the amount of blocks
      */
@@ -108,7 +108,7 @@ public class Miner {
     }
 
     /**
-     * Add the {@link #chunk} in the Set containing all the chunks in which there is an active operation
+     * Adds the {@link #chunk} in the Set containing all the chunks in which there is an active operation
      * started by the player
      */
     public void operationStarted() {
@@ -123,8 +123,7 @@ public class Miner {
     }
 
     /**
-     * Remove the {@link #chunk} from the Set in the main class
-     * containing all the chunks in which there is an active operation
+     * Removes the {@link #chunk} from the Set containing the chunks in which there is an active operation
      */
     public void operationFinished() {
         Map<UUID, Set<Chunk>> operations = minersManager.getActiveOperations();

@@ -25,7 +25,7 @@ public final class ChatUtil {
     private static String prefix = color("Messages.prefix") + ChatColor.RESET + " ";
 
     /**
-     * Return the colored chat prefix specified in the configuration file
+     * Returns the colored chat prefix specified in the configuration file
      *
      * @return the prefix
      */
@@ -34,7 +34,7 @@ public final class ChatUtil {
     }
 
     /**
-     * Color the String translating it to ChatColor using the character '&'
+     * Colors the String by translating it to ChatColor using the character '&'
      *
      * @param string the String to color
      * @return the colored string
@@ -44,17 +44,17 @@ public final class ChatUtil {
     }
 
     /**
-     * Color the string using {@link #color(String)} and append it to the prefix
+     * Colors the string and append it to the prefix
      *
-     * @param configMessageKey The subkey of config.yml's ConfigurationSection "Messages"
-     * @return the prefix + colored message
+     * @param configMessageKey the subkey of config.yml's ConfigurationSection "Messages"
+     * @return the chat prefix  + colored message
      */
     public static String c(String configMessageKey) {
         return prefix + color("Messages." + configMessageKey);
     }
 
     /**
-     * Retrieve the string from the config.yml and color it using {@link #colorString(String)}
+     * Retrieves the string from the config.yml and colors it using
      *
      * @param configPath The path to the string in the config.yml
      * @return the colored string
@@ -64,14 +64,14 @@ public final class ChatUtil {
     }
 
     /**
-     * Color each string of the list using {@link #colorString(String)}
+     * Colors each string of the list
      *
-     * @param lores The list of strings to color
-     * @return the colored list
+     * @param stringList the list of strings to color
+     * @return a new {@link ArrayList} instance which contains the colored strings
      */
-    public static List<String> color(List<String> lores) {
+    public static List<String> color(List<String> stringList) {
         List<String> coloredStings = new ArrayList<>();
-        lores.forEach(str -> coloredStings.add(colorString(str)));
+        stringList.forEach(str -> coloredStings.add(colorString(str)));
         return coloredStings;
     }
 
@@ -84,32 +84,34 @@ public final class ChatUtil {
     }
 
     /**
-     * Capitalize the first letter.
+     * Capitalizes the first letter of the given String.
      * The string must be at least one character long.
      *
      * @param str the string to capitalize
      * @return the capitalized String
      */
     public static String capitalizeFirstChar(String str) {
-        str = str.toLowerCase();
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        if (str.length() < 1)
+            throw new IllegalArgumentException("The string must contain at least one character");
+
+        String lowerCaseStr = str.toLowerCase();
+        return lowerCaseStr.substring(0, 1).toUpperCase() + lowerCaseStr.substring(1);
     }
 
     /**
-     * Send an alert message to the ConsoleSender
+     * Sends an alert message to the ConsoleSender
      *
-     * @param message The message to display
+     * @param message the message to display
      */
     public static void alert(String message) {
         main.getServer().getConsoleSender().sendMessage("[ChunkMiner] " + ChatColor.RED + message);
     }
 
     /**
-     * @return how to name console in messages. It's specified in the configuration file (config.yml)
+     * @return how to name console in messages according to the configuration file (config.yml)
      */
     public static String getConsoleName() {
         return main.getConfig().getString("MainSettings.consoleName");
     }
-
 
 }

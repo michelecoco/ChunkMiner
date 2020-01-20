@@ -23,7 +23,7 @@ public class PlayerJoinListener implements Listener {
     @SuppressWarnings("unused")
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // If this code run means that the listener is registered and update-checking is enabled in the config.yml
+        // If this code run it means that the listener is registered and update-checking is enabled in the config.yml
 
         Player player = event.getPlayer();
         if (updateChecker.availableUpdate() && Permission.NOTIFY_UPDATES.has(player)) {
