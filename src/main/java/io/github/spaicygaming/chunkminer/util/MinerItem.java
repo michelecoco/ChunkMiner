@@ -41,6 +41,7 @@ public class MinerItem {
     private void init() {
         item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
+        assert itemMeta != null;
 
         itemMeta.setDisplayName(displayName);
         itemMeta.setLore(lore);
@@ -73,6 +74,7 @@ public class MinerItem {
 
         ItemMeta ciMeta = compareItemStack.getItemMeta();
 
+        //noinspection ConstantConditions
         return compareItemStack.getType() == material
                 && ciMeta.getDisplayName().equals(displayName)
                 && ciMeta.getLore().equals(lore);

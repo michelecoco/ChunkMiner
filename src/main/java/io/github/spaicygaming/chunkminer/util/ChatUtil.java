@@ -17,12 +17,12 @@ public final class ChatUtil {
     /**
      * Main class instance
      */
-    private static ChunkMiner main = ChunkMiner.getInstance();
+    private final static ChunkMiner main = ChunkMiner.getInstance();
 
     /**
      * Chat prefix
      */
-    private static String prefix = color("Messages.prefix") + ChatColor.RESET + " ";
+    private final static String prefix = color("Messages.prefix") + ChatColor.RESET + " ";
 
     /**
      * Returns the colored chat prefix specified in the configuration file

@@ -21,7 +21,7 @@ public class UpdateChecker {
     @SuppressWarnings("FieldCanBeLocal")
     private final String VERSION_URL = "https://api.spiget.org/v2/resources/54969/versions?sort=-name";
 
-    private double currentVersion;
+    private final double currentVersion;
     private double latestVersion;
 
     public UpdateChecker(double currentVersion) {

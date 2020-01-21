@@ -13,26 +13,27 @@ public class MinersManager {
     /**
      * Materials of blocks that mustn't be removed by miners
      */
-    private Set<Material> ignoredMaterials;
+    private final Set<Material> ignoredMaterials;
 
     /**
      * The lowest y height the miner starts mine from (1 is the minimum allowed value)
      */
-    private int minHeight;
+    private final int minHeight;
 
     /**
      * The maximum amount of ChunkMiners a player can place at once
      */
-    private int maxMinersAmountAtOnce;
+    private final int maxMinersAmountAtOnce;
 
     /**
      * Chunks currently processed associated to the players who placed the miners.
      * (scanning or mining operation in progress)
      */
-    private Map<UUID, Set<Chunk>> activeOperations = new HashMap<>();
+    private final Map<UUID, Set<Chunk>> activeOperations = new HashMap<>();
 
     public MinersManager(ChunkMiner main) {
         ConfigurationSection config = main.getConfig().getConfigurationSection("MainSettings");
+        assert config != null;
 
         this.ignoredMaterials = config.getStringList("ignoreMaterials").stream().map(Material::valueOf)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));

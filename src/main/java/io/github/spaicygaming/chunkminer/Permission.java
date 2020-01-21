@@ -16,7 +16,7 @@ public enum Permission {
     NOTIFY_ONUSE,
     NOTIFY_UPDATES;
 
-    private String permissionValue;
+    private final String permissionValue;
 
     Permission() {
         permissionValue = this.toString();

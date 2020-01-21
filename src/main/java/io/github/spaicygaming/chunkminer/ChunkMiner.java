@@ -28,7 +28,7 @@ public class ChunkMiner extends JavaPlugin {
      * Latest configuration file (config.yml) version
      */
     @SuppressWarnings("FieldCanBeLocal") // It's here for better code readability
-    private final double configVersion = 1.4;
+    private final double configVersion = 1.5;
 
     public void onEnable() {
         instance = this;
@@ -51,6 +51,7 @@ public class ChunkMiner extends JavaPlugin {
 
         // Register listeners/commands
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(this, minersManager, worldGuardIntegration, factionsUUIDIntegration), this);
+        //noinspection ConstantConditions - can't happen
         getCommand("chunkminer").setExecutor(new CMCommands(this));
 
         // Update Checker
@@ -79,7 +80,7 @@ public class ChunkMiner extends JavaPlugin {
      */
     private void checkConfigVersion() {
         if (getConfig().getDouble("configVersion") < configVersion) {
-            ChatUtil.alert("OUTDATED config.yml FILE DETECTED, PLEASE DELETE THE OLD ONE!");
+            ChatUtil.alert("OUTDATED config.yml FILE DETECTED, please delete the old one");
             ChatUtil.alert("You can also manually update it: https://github.com/SpaicyGaming/ChunkMiner/blob/master/ChunkMiner/src/main/resources/config.yml");
         }
     }

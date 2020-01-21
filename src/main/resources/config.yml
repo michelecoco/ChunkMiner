@@ -65,14 +65,14 @@ Messages:
   noCmdPerms: "&cYou do not have permissions to perform this command"
   noPlacePerms: "&cYou are not allowed to place ChunkMiners! &7Missing permission: '{perm}'"
   targetOffline: "&cThe player '{target}' is not online"
-  itemGived: "&aYou gave &6{amount}x ChunkMiner &ato &b{target}"
+  itemGiven: "&aYou gave &6{amount}x ChunkMiner &ato &b{target}"
   itemReceivedOther: "&aYou received &6{amount}x &bChunkMiner &afrom &6{giver}"
   itemReceived: "&aYou received &6{amount}x &bChunkMiner"
   minerPlaced: "&aYou placed a &bChunkMiner&a! &7Starting operation..."
   minerSuccess: "&aOperation successfully finished!"
   chunkAlreadyMined: "&cOperation cancelled! This chunk seems to be already mined!"
   minerNotifyStaff: "&7(&4!&7) &a{playerName} placed a ChunkMiner in the world &6{world} &ain the chunk x: &6{x} &az: &6{z}"
-  targetFullInventory: "&c{target}'s invantory is full"
+  targetFullInventory: "&c{target}'s inventory is full"
   notAllowedGamemode: "&cYou can't place &bChunkMiners &cwhile you are in gamemode &6{gamemode}"
   invalidAmount: "&c'&6{input}&c' is not a valid amount. It must be a positive integer"
   blacklistedWorld: "&cYou are not allowed to place &bChunkMiners &c in this world! &7({world})"
@@ -80,9 +80,10 @@ Messages:
   maxAmountReached: "&cYou can't place more than &6{max_amount} &bChunkMiners &cat once!"
   notAllowedHereWorldGuard: "&cYou are not allowed to place &bChunkMiners &chere!"
   notAllowedHereFactions: "&cYou are not allowed to place &bChunkMiners &cin this claim!"
+  problemOccurred: "&cA problem occurred."
 
 # Recommended! The plugin notify you if there is a new update. (Checks only on startup)
 CheckForUpdates: true
 
-# DO NOT TOUCH
-configVersion: 1.4
+# DO NOT TOUCH, internal usage
+configVersion: 1.5

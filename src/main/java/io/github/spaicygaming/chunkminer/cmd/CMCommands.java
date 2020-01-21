@@ -16,15 +16,16 @@ public class CMCommands implements CommandExecutor {
     /**
      * Main class instance
      */
-    private ChunkMiner main;
-    private List<String> helpMenu;
+    private final ChunkMiner main;
+    private final List<String> helpMenu;
 
     public CMCommands(ChunkMiner main) {
         this.main = main;
         this.helpMenu = ChatUtil.color(main.getConfig().getStringList("Messages.HelpMenu"));
     }
 
-    public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
+    public boolean onCommand(@SuppressWarnings("NullableProblems") CommandSender sender, @SuppressWarnings("NullableProblems") Command cmd,
+                             @SuppressWarnings("NullableProblems") String alias, String[] args) {
         // Args Length 2
         if (args.length == 2) {
             // Get command
@@ -96,7 +97,7 @@ public class CMCommands implements CommandExecutor {
                 main.getMinerItem().give(target, amount);
 
                 // Send message to command executor (giver)
-                sender.sendMessage(ChatUtil.c("itemGived").replace("{target}", targetName)
+                sender.sendMessage(ChatUtil.c("itemGiven").replace("{target}", targetName)
                         .replace("{amount}", String.valueOf(amount)));
 
                 // How to name the sender

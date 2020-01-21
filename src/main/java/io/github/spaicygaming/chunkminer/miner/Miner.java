@@ -15,27 +15,27 @@ import java.util.stream.IntStream;
 
 public class Miner {
 
-    private MinersManager minersManager;
+    private final MinersManager minersManager;
 
     /**
      * The chunk the player placed the miner
      */
-    private Chunk chunk;
+    private final Chunk chunk;
 
     /**
      * The player who placed the miner
      */
-    private Player player;
+    private final Player player;
 
     /**
      * Player's UUID
      */
-    private UUID playerUniqueId;
+    private final UUID playerUniqueId;
 
     /**
      * WorldGuardHook instance
      */
-    private WorldGuardIntegration worldGuardIntegration;
+    private final WorldGuardIntegration worldGuardIntegration;
 
     /**
      * Set the given Block's material to AIR

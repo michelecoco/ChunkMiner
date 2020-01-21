@@ -1,23 +1,26 @@
 package io.github.spaicygaming.chunkminer.hooks;
 
-import com.sk89q.worldedit.Vector;
+import com.google.common.base.Preconditions;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.Extent;
-import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
-import com.sk89q.worldguard.protection.managers.RegionManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-public class WorldGuardIntegration extends PluginIntegration { // todo support latest worldguard versions
+public class WorldGuardIntegration extends PluginIntegration {
 
     private WorldGuardPlugin worldGuardPlugin;
     private WorldGuardPlatform worldGuard;
+
+    /**
+     * Whether the running WorldGuard version is previous to 7.0
+     */
     private boolean pre7;
 
     public WorldGuardIntegration(boolean integrationEnabledInConfig) {
@@ -40,57 +43,38 @@ public class WorldGuardIntegration extends PluginIntegration { // todo support l
     }
 
     /**
-     * Gets the given world's region manager
-     *
-     * @param world the Bukkit world
-     * @return world's region manager
-     */
-    @SuppressWarnings("unused") // will be used in a future version
-    public RegionManager getRegionManager(org.bukkit.World world) {
-        if (pre7) {
-            return worldGuardPlugin.getRegionManager(world);
-        } else {
-            return worldGuard.getRegionContainer().get(worldGuard.getWorldByName(world.getName()));
-        }
-    }
-
-    /**
      * {@inheritDoc} WorldGuard
      */
     @Override
     public boolean canBuildHere(Player player, Location location) {
         if (pre7) {
-            return worldGuardPlugin.canBuild(player, location);
-        } else {
-            @SuppressWarnings("ConstantConditions") Extent worldEditWorld = worldGuard.getWorldByName(location.getWorld().getName());
-            com.sk89q.worldedit.util.Location worldEditLocation;
-
             try {
-                Vector position;
-                try {
-                    position = BukkitUtil.toVector(location);
-                } catch (NoClassDefFoundError | NoSuchMethodError err) {
-                    position = new Vector(location.getX(), location.getY(), location.getZ());
-                }
-
-                worldEditLocation = new com.sk89q.worldedit.util.Location(worldEditWorld, position);
+                @SuppressWarnings("JavaReflectionMemberAccess") // backward compatibility
+                        Method canBuildMethod = WorldGuardPlugin.class.getMethod("canBuild", Player.class, Location.class);
+                return (boolean) canBuildMethod.invoke(worldGuardPlugin, player, location);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                // should never happen
+                e.printStackTrace();
+                return false; // todo remove the player from the set
             }
-            // Support WorldEdit 7.0.0-beta-02+ versions
-            catch (NoClassDefFoundError post7beta02Version) {
-                Class<com.sk89q.worldedit.util.Location> weLocationClass = com.sk89q.worldedit.util.Location.class;
-                try {
-                    //noinspection JavaReflectionMemberAccess
-                    Constructor<com.sk89q.worldedit.util.Location> constructor = weLocationClass.getConstructor(Extent.class, Vector3.class);
-
-                    worldEditLocation = constructor.newInstance(worldEditWorld, Vector3.at(location.getX(), location.getY(), location.getZ()));
-                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-
+        } else {
+            @SuppressWarnings("ConstantConditions")
+            Extent worldEditWorld = getWorldEditWorldByName(location.getWorld().getName());
+            com.sk89q.worldedit.util.Location worldEditLocation
+                    = new com.sk89q.worldedit.util.Location(worldEditWorld, location.getX(), location.getY(), location.getZ());
             return worldGuard.getRegionContainer().createQuery().testBuild(worldEditLocation, worldGuardPlugin.wrapPlayer(player));
         }
     }
 
+    /**
+     * Gets WorldEdit World from its name
+     *
+     * @param worldName the name of the world
+     * @return a new {@link BukkitWorld} instance
+     */
+    private com.sk89q.worldedit.world.World getWorldEditWorldByName(String worldName) {
+        org.bukkit.World bukkitWorld = Bukkit.getServer().getWorld(worldName);
+        Preconditions.checkNotNull(bukkitWorld);
+        return new BukkitWorld(bukkitWorld);
+    }
 }

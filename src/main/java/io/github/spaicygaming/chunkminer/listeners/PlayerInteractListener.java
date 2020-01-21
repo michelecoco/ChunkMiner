@@ -9,6 +9,7 @@ import io.github.spaicygaming.chunkminer.miner.MinersManager;
 import io.github.spaicygaming.chunkminer.util.ChatUtil;
 import io.github.spaicygaming.chunkminer.util.MinerItem;
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,12 +19,12 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerInteractListener implements Listener {
 
-    private ChunkMiner main;
-    private MinerItem minerItem;
-    private MinersManager minersManager;
+    private final ChunkMiner main;
+    private final MinerItem minerItem;
+    private final MinersManager minersManager;
 
-    private WorldGuardIntegration worldGuardIntegration;
-    private FactionsUUIDIntegration factionsUUIDIntegration;
+    private final WorldGuardIntegration worldGuardIntegration;
+    private final FactionsUUIDIntegration factionsUUIDIntegration;
 
     public PlayerInteractListener(ChunkMiner main, MinersManager minersManager, WorldGuardIntegration worldGuardIntegration, FactionsUUIDIntegration factionsUUIDIntegration) {
         this.main = main;
@@ -78,19 +79,23 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
+        Block clickedBlock = event.getClickedBlock();
+        assert clickedBlock != null;
+
         // FactionsUUID checks (check if the player is allowed to place the miner in this claim)
-        if (factionsUUIDIntegration.shouldPerformChecks())
-            if (!factionsUUIDIntegration.canBuildHere(player, event.getClickedBlock().getLocation())) {
+        if (factionsUUIDIntegration.shouldPerformChecks()) {
+            if (!factionsUUIDIntegration.canBuildHere(player, clickedBlock.getLocation())) {
                 player.sendMessage(ChatUtil.c("notAllowedHereFactions"));
                 return;
             }
+        }
 
         /*
          * TODO: add a confirm gui
          */
 
         // The chunk the player placed the miner in
-        Chunk chunk = event.getClickedBlock().getLocation().getChunk();
+        Chunk chunk = clickedBlock.getLocation().getChunk();
 
         // Return if there is currently an active process in the chunk
         if (minersManager.isCurrentlyProcessed(chunk)) {

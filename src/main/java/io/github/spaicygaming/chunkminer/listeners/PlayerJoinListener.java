@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerJoinListener implements Listener {
 
-    private UpdateChecker updateChecker;
+    private final UpdateChecker updateChecker;
 
     public PlayerJoinListener(UpdateChecker updateChecker) {
         this.updateChecker = updateChecker;
